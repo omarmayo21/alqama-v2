@@ -6,17 +6,41 @@ import PageHeader from '../components/ui/PageHeader';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { WHATSAPP_URL } from '../utils/constants';
 import { useLanguage } from '../context/LanguageContext';
+import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
 
 const Article: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { language, isRTL } = useLanguage();
+  const { blogPosts: sanityPosts, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentPosts = language === 'en' ? blogPostsEn : blogPosts;
   const ArrowIcon = isRTL ? ArrowRight : ArrowLeft;
 
-  const post = currentPosts.find((p) => p.id === id);
+  const post = React.useMemo(() => {
+    const foundSanity = sanityPosts?.find(
+      (p) => p.slug === id || p._id === id || p._id === `blogPost-${id}` || (p as any).id === id
+    );
+    const foundStatic = currentPosts.find((p) => p.id === id);
+
+    if (foundSanity) {
+      return {
+        id: foundSanity.slug || foundSanity._id,
+        title: cmsT(foundSanity.title, foundStatic?.title || ''),
+        category: cmsT(foundSanity.category, foundStatic?.category || ''),
+        author: cmsT(foundSanity.author, foundStatic?.author || (language === 'en' ? 'Coach Ahmed' : 'كابتن أحمد')),
+        date: cmsT(foundSanity.date, foundStatic?.date || ''),
+        readTime: cmsT(foundSanity.readTime, foundStatic?.readTime || ''),
+        image: foundSanity.imageUrl || foundSanity.coverImageUrl || foundStatic?.image || '/images/blog-1.jpg',
+        content: cmsT(foundSanity.content, foundStatic?.content || ''),
+        tags: foundSanity.tags && foundSanity.tags.length > 0
+          ? foundSanity.tags.map((tg: any) => (typeof tg === 'object' ? cmsT(tg, '') : String(tg)))
+          : (foundStatic?.tags || []),
+      };
+    }
+    return foundStatic;
+  }, [sanityPosts, currentPosts, id, cmsT, language]);
 
   if (!post) return <Navigate to={basePath === '' ? '/blog' : `${basePath}/blog`} replace />;
 
@@ -126,7 +150,7 @@ const Article: React.FC = () => {
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mt-10 pt-8 border-t border-gray-100">
                 <Tag size={16} className="text-[#5A6E85]" />
-                {post.tags.map((tag) => (
+                {post.tags.map((tag: string) => (
                   <span
                     key={tag}
                     className="bg-[#F2F3F5] text-[#18213F] text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-red-50 hover:text-[#D90429] transition-colors cursor-pointer border border-gray-100"

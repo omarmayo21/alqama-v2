@@ -50,13 +50,6 @@ export interface BlogPost {
   tags: string[];
 }
 
-export interface FAQItem {
-  id: string;
-  question: string;
-  answer: string;
-  category: string;
-}
-
 export interface Coach {
   id: string;
   name: string;

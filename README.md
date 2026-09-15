@@ -1,27 +1,28 @@
 # ALQIMA Sports Academy | أكاديمية القمة الرياضية
 
-An Arabic-first (RTL), modern, high-performance web platform for **ALQIMA Sports Academy** (أكاديمية القمة الرياضية) in Jeddah, Saudi Arabia. Built with **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4**, and **React Router v7**.
+A production-grade, bilingual (Arabic & English with full RTL/LTR support), high-performance web platform and Sanity CMS content ecosystem for **ALQIMA Sports Academy** (أكاديمية القمة الرياضية) in Jeddah, Saudi Arabia.
+
+Built with **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4**, **React Router v7**, and **Sanity Studio v3**.
 
 ---
 
 ## 1. Project Overview
 
 * **Project Name**: ALQIMA Sports Academy (أكاديمية القمة الرياضية)
-* **Purpose**: A comprehensive digital presence and enrollment portal for a premier athletic training academy in Jeddah, Saudi Arabia. It showcases 7 athletic sports disciplines, multi-tiered subscription plans, weekly training timetables, athletic development pathways, sports articles, and an interactive 3-step registration wizard.
+* **Purpose**: A premier digital presence, interactive sports catalog, multi-channel lead generation platform, and headless CMS content management system for an athletic training academy in Jeddah, Saudi Arabia.
 * **Target Users**:
-  * **Parents & Guardians**: Seeking structured sports training, verified coach credentials, safety standards, and membership enrollment for their children/teens (ages 3–25).
-  * **Athletes & Participants**: Exploring training programs, session schedules, capacity availability, and competitive tournament pathways.
-  * **Academy Administrators & Coaches**: Publishing timetables, program details, and receiving applicant leads.
-* **Main Features & Current Functionality**:
-  * **Arabic-First RTL Design**: Full Right-to-Left layout support with Cairo and Tajawal typography.
-  * **7 Specialized Sport Pages**: Football, Basketball, Swimming, Karate, Kickboxing, Gymnastics, and Roller Skating with dedicated detail pages (`/sports/:sportId`).
-  * **Weekly Training Timetable (`/schedule`)**: Interactive filtering by sport and day of the week, level color-coding, and seat capacity indicators.
-  * **Multi-Tier Memberships (`/subscriptions`)**: Monthly vs. Quarterly period switcher with dynamic pricing calculations and comparison matrix.
-  * **3-Step Registration Wizard (`/register`)**: Interactive multi-step form with validation for student information, guardian contact, sport/level selection, and instant summary confirmation.
-  * **Help & FAQ Center (`/faq`)**: Keyword search and category-filtered accordion powered by layout-safe CSS transitions.
-  * **Sports Blog (`/blog` & `/blog/:id`)**: Category filtering, search bar, and full article view.
-  * **Contact & Location Center (`/contact`)**: Form validation, working hours, and floating WhatsApp integration.
-  * **Single-File Bundling**: Optimized build pipeline packaging the entire application into a self-contained single distribution bundle.
+  * **Parents & Guardians**: Seeking structured sports training, verified coach credentials, safety standards, transparent pricing, and direct WhatsApp consultations for their children and teens (ages 3–25).
+  * **Athletes & Participants**: Exploring specialized training programs across 7 sports disciplines, schedules, and athletic development pathways.
+  * **Academy Administrators & Content Editors**: Managing all user-facing website content, schedules, offers, blog articles, SEO metadata, and analytics keys through an intuitive, client-friendly **Sanity Studio v3**.
+* **Key Features**:
+  * **Bilingual Support (Arabic & English)**: Seamless language switcher with localized typography (Cairo & Tajawal for Arabic, Inter for English), RTL/LTR direction switching, and persistent state.
+  * **100% Headless CMS Integration**: Connected to Sanity Lake (`s4sblwvk`, `production`) with resilient fallback data and dynamic GROQ fetching.
+  * **Client-Friendly Sanity Studio v3**: Clean desk hierarchy with Arabic/English field titles, helpful descriptions, visibility toggles, required-field validations, and custom preview badges.
+  * **Safe Multi-Channel Analytics Tracking**: Dynamic integration for GA4, Meta Pixel, Microsoft Clarity, Google Ads, and Google Tag Manager (GTM) with script deduplication and event dispatching (`whatsapp_click`, `sport_view`, `offer_view`, `blog_view`, `search_query`, `page_view`).
+  * **CMS-Driven Sport Schedule**: Support for Day, Time, Age Group, Coach, Level, Location, Active toggle, and Display Order.
+  * **Dynamic Offers & Payment Plans**: Highlighting active seasonal discounts, sibling bundles, and BNPL installment badges (Tabby & Tamara).
+  * **Searchable Knowledge & Blog Engine**: Instant real-time filtering for articles and categories.
+  * **Direct WhatsApp Funneling**: High-converting, localized WhatsApp deep links prefilled with context (sport name, offer code, or inquiry topic).
 
 ---
 
@@ -29,20 +30,17 @@ An Arabic-first (RTL), modern, high-performance web platform for **ALQIMA Sports
 
 | Layer | Technology | Version | Purpose / Notes |
 | :--- | :--- | :--- | :--- |
-| **Framework** | [React](https://react.dev/) | `19.2.6` | Core frontend UI library |
+| **Frontend Framework** | [React](https://react.dev/) | `19.2.6` | Core frontend UI library |
 | **DOM Renderer** | [React DOM](https://react.dev/) | `19.2.6` | Web DOM rendering engine |
 | **Language** | [TypeScript](https://www.typescriptlang.org/) | `5.9.3` | Type-safe development (`strict: true`, `target: ES2020`) |
 | **Build Tool / Bundler** | [Vite](https://vitejs.dev/) | `7.3.2` | Fast developer server and production bundler |
-| **Single-File Plugin** | [vite-plugin-singlefile](https://github.com/richardtallent/vite-plugin-singlefile) | `2.3.0` | Inlines scripts, styles, and assets into a single `dist/index.html` |
-| **Styling / CSS** | [Tailwind CSS v4](https://tailwindcss.com/) | `4.1.17` | Modern utility-first CSS engine via `@tailwindcss/vite` |
-| **CSS Compiler** | [@tailwindcss/vite](https://tailwindcss.com/) | `4.1.17` | Official Vite integration plugin for Tailwind v4 |
-| **Class Utilities** | `clsx` & `tailwind-merge` | `2.1.1` / `3.4.0` | Conditional class merging via `src/utils/cn.ts` |
+| **Single-File Plugin** | [vite-plugin-singlefile](https://github.com/richardtallent/vite-plugin-singlefile) | `2.3.0` | Inlines scripts and styles into distribution bundle |
+| **Styling / CSS** | [Tailwind CSS v4](https://tailwindcss.com/) | `4.1.17` | Utility-first styling via `@tailwindcss/vite` |
 | **Routing** | [React Router](https://reactrouter.com/) | `7.18.3` | Client-side routing (`react-router-dom`) |
+| **Headless CMS** | [Sanity.io](https://www.sanity.io/) | `v3.77.0` | Cloud Content Lake (`s4sblwvk` / `production`) |
+| **Sanity Client** | `@sanity/client` & `@sanity/image-url` | `^7.1.3` / `^1.1.2` | Public CDN fetching and responsive image asset URL generation |
 | **Icons** | [Lucide React](https://lucide.dev/) | `^1.45.0` | Crisp vector icons with cohesive line weight and stroke |
-| **Typography** | [Google Fonts](https://fonts.google.com/) | Cloud | `Cairo` (headings, badges, buttons) and `Tajawal` (body) |
-| **Backend** | *None (Static Data)* | — | All data is structured locally in `src/data/*.ts` |
-| **Database** | *None* | — | No external database connected |
-| **Authentication** | *None* | — | All routes are publicly accessible |
+| **Analytics Engine** | Custom Safe Script Manager | — | GA4, Meta Pixel, Microsoft Clarity, Google Ads, GTM |
 
 ---
 
@@ -50,478 +48,240 @@ An Arabic-first (RTL), modern, high-performance web platform for **ALQIMA Sports
 
 ```
 alqima-sports-/
-├── .impeccable/                 # Impeccable UI skill configuration
-│   └── config.json              # Workflow settings (e.g. buildPath: "code")
-├── public/                      # Static assets served as-is
+├── .env.example                 # Environment variables template (committed)
+├── public/                      # Static public assets served as-is
 │   ├── favicon.svg              # Academy favicon SVG
-│   └── images/                  # High-resolution sport photography
+│   └── images/                  # Official logo and sport photography
+│       ├── logo.png             # Official ALQIMA Academy brand logo
 │       ├── about-team.jpg       # Academy coaching staff photo
 │       ├── basketball.jpg       # Basketball program banner
 │       ├── football.jpg         # Football training banner
 │       ├── gymnastics.jpg       # Gymnastics program banner
-│       ├── hero-bg.jpg          # Homepage hero background image
 │       ├── karate.jpg           # Karate / Martial arts photo
 │       ├── kickboxing.jpg       # Kickboxing session banner
 │       ├── roller-skating.jpg   # Roller skating photo
 │       └── swimming.jpg         # Olympic swimming pool banner
+├── scripts/
+│   └── migrate-to-sanity.mjs    # Idempotent content migration script using createIfNotExists()
+├── studio/                      # Standalone Sanity Studio v3
+│   ├── deskStructure.ts         # Custom 4-category desk hierarchy
+│   ├── sanity.config.ts         # Sanity Studio configuration (s4sblwvk / production)
+│   ├── sanity.cli.ts            # Sanity CLI configuration
+│   ├── schemaTypes/             # Document & Object schema definitions
+│   │   ├── objects/             # Localized string, text, blockContent, image, scheduleItem, etc.
+│   │   └── documents/           # Site settings, UI labels, home, about, sports, offers, blog, etc.
+│   └── package.json             # Studio dependencies
 ├── src/
 │   ├── components/
-│   │   ├── layout/              # Structural layout components
-│   │   │   ├── Header.tsx       # Top bar, sticky navigation, dropdowns & mobile drawer
-│   │   │   └── Footer.tsx       # Multi-column footer, social links & copyright
-│   │   └── ui/                  # Reusable design system primitives
-│   │       ├── Button.tsx       # Versatile button/link component with variant styles
-│   │       ├── Logo.tsx         # Academy brand logo with SVG icon & typography
-│   │       ├── PageHeader.tsx   # Top banner with title, breadcrumbs & ambient gradient
-│   │       ├── SectionHeader.tsx# Standardized section title, subtitle & contrast styling
-│   │       └── SportIcon.tsx    # Dynamic Lucide vector icon resolver per sport ID
-│   ├── data/                    # Local typed database & structured mock datasets
-│   │   ├── blog.ts              # Blog posts, categories, and full article contents
-│   │   ├── faq.ts               # Frequently asked questions categorized by topic
-│   │   ├── schedule.ts          # Weekly timetable sessions, capacities, coaches & locations
-│   │   ├── sports.ts            # 7 sports definitions, features, age ranges & levels
-│   │   └── subscriptions.ts     # Monthly and quarterly subscription tiers & pricing
-│   ├── pages/                   # Application route view components (15 pages)
-│   │   ├── About.tsx            # Story, values, milestones timeline & coaching team
-│   │   ├── Article.tsx          # Single blog article view with sidebar & related posts
-│   │   ├── Blog.tsx             # Blog directory with search and category filters
-│   │   ├── Contact.tsx          # Contact details, interactive message form & facility info
-│   │   ├── FAQ.tsx              # Searchable FAQ accordion with smooth CSS grid expansion
-│   │   ├── Home.tsx             # Main landing page with hero, stats, features & testimonials
-│   │   ├── NotFound.tsx         # Custom 404 error page with navigation buttons
-│   │   ├── Privacy.tsx          # Privacy policy and user data governance
-│   │   ├── Programs.tsx         # Age-category pathways (Mini, Beginners, Youth, Elite)
-│   │   ├── Register.tsx         # 3-step athlete registration wizard
-│   │   ├── Schedule.tsx         # Interactive timetable with sport & day filters
-│   │   ├── SportDetail.tsx      # Dynamic detail page per sport (`/sports/:sportId`)
-│   │   ├── Sports.tsx           # Directory of all 7 sports programs
-│   │   ├── Subscriptions.tsx    # Membership tiers, quarterly toggle & comparison table
-│   │   └── Terms.tsx            # Terms of service and academy rules
-│   ├── types/
-│   │   └── index.ts             # Global TypeScript interface definitions
-│   ├── utils/
-│   │   └── cn.ts                # Classnames (clsx + tailwind-merge) utility function
-│   ├── App.tsx                  # Root router configuration, Layout shell & scroll-to-top
-│   ├── index.css                # Global Tailwind v4 theme, browser surface styling & keyframes
-│   └── main.tsx                 # React DOM client entry point
-├── dist/                        # Production build output (generated upon `npm run build`)
-│   └── index.html               # Single self-contained distributable bundle
-├── index.html                   # HTML entry template with Arabic RTL meta & font links
-├── package.json                 # Project dependencies, metadata, and scripts
-├── package-lock.json            # Deterministic dependency lockfile
-├── PRODUCT.md                   # Durable product vision, positioning, and principles
-├── tsconfig.json                # TypeScript compiler configuration with path aliases (`@/*`)
-└── vite.config.ts               # Vite configuration with React, Tailwind v4, and single-file plugin
+│   │   ├── animation/           # Page transitions and scroll animations
+│   │   ├── layout/              # Header, Footer, and Layout shell
+│   │   └── ui/                  # Button, Logo, PageHeader, SectionHeader, SportIcon
+│   ├── context/
+│   │   ├── LanguageContext.tsx  # Language state (ar/en), RTL/LTR direction, dictionary fallback
+│   │   └── SanityDataContext.tsx# Global CMS context, GROQ fetching, and auto-analytics initialization
+│   ├── data/                    # Reliable seed/fallback datasets (7 sports, 3 offers, blog)
+│   ├── hooks/
+│   │   └── useAnalyticsTracker.ts # React Router route change listener for auto page_view tracking
+│   ├── lib/
+│   │   ├── analytics/
+│   │   │   └── tracker.ts       # Safe script injection & deduplicated event tracking manager
+│   │   └── sanity/
+│   │       ├── client.ts        # Public read-only Sanity client configuration
+│   │       ├── types.ts         # TypeScript interfaces for all CMS schemas
+│   │       ├── image.ts         # Sanity image URL builder with WebP auto-optimization
+│   │       ├── queries.ts       # Optimized GROQ queries
+│   │       └── api.ts           # Type-safe data access layer
+│   ├── pages/                   # Application route views (Home, About, Sports, SportDetail, Offers, Blog, Article, Contact, Terms, Privacy, NotFound)
+│   ├── types/                   # Global TypeScript definitions
+│   ├── utils/                   # Helper functions (cn.ts)
+│   ├── App.tsx                  # Root router, SanityDataProvider, Layout, Floating WhatsApp
+│   ├── index.css                # Global Tailwind v4 styles, fonts & keyframes
+│   └── main.tsx                 # React client mount point
+├── dist/                        # Production build output
+├── package.json                 # Scripts and dependencies
+├── tsconfig.json                # TypeScript compiler configuration
+└── vite.config.ts               # Vite configuration
 ```
 
 ---
 
-## 4. Pages & Routes
+## 4. Environment Variables & Security Configuration
 
-All routes are client-side routes managed by **React Router DOM v7** inside `src/App.tsx`.
+The project uses a structured environment variable configuration with strict separation between public client variables and sensitive backend/migration secrets.
 
-| Route | Page Component | File Path | Purpose & Key Features | Auth Required |
-| :--- | :--- | :--- | :--- | :--- |
-| `/` | `Home` | `src/pages/Home.tsx` | Main landing page: hero section, quick stats, sports overview, values, programs overview, testimonials, CTA, and recent blog posts. | No |
-| `/about` | `About` | `src/pages/About.tsx` | Academy history, 10-year milestone timeline, core values, mission/vision, leadership and coach cards. | No |
-| `/sports` | `Sports` | `src/pages/Sports.tsx` | Grid of all 7 sport programs with age ratings, session counts, and links to detailed views. | No |
-| `/sports/:sportId` | `SportDetail` | `src/pages/SportDetail.tsx` | Dynamic deep-dive for a single sport (e.g. `/sports/football`). Shows description, features, training schedule, and sidebar registration card. | No |
-| `/programs` | `Programs` | `src/pages/Programs.tsx` | Age-tier pathways (Mini 3–6y, Beginners 7–10y, Youth 11–15y, Elite 16+y), special summer camps, and registration steps. | No |
-| `/schedule` | `Schedule` | `src/pages/Schedule.tsx` | Interactive weekly timetable with dual filters (Sport + Day), seat capacity meters, level tags, coach names, and locations. | No |
-| `/subscriptions`| `Subscriptions`| `src/pages/Subscriptions.tsx` | Membership plans with Monthly/Quarterly toggle (10% discount badge), feature lists, and a comparison table. | No |
-| `/register` | `Register` | `src/pages/Register.tsx` | 3-step registration wizard: (1) Student data, (2) Guardian data, (3) Sport & Level selection with validation and instant confirmation card. | No |
-| `/blog` | `Blog` | `src/pages/Blog.tsx` | Searchable blog directory with featured hero article, category pills, and article cards. | No |
-| `/blog/:id` | `Article` | `src/pages/Article.tsx` | Full-text article reader with author metadata, formatted markdown body, tags, and related articles sidebar. | No |
-| `/contact` | `Contact` | `src/pages/Contact.tsx` | Direct phone, email, working hours, interactive inquiry form with validation, and facility map details. | No |
-| `/faq` | `FAQ` | `src/pages/FAQ.tsx` | Searchable FAQ repository with category filters and CSS grid-template-rows accordion animations. | No |
-| `/privacy` | `Privacy` | `src/pages/Privacy.tsx` | Official privacy policy, data collection terms, and user rights index. | No |
-| `/terms` | `Terms` | `src/pages/Terms.tsx` | Official terms of service, safety regulations, refund policies, and intellectual property terms. | No |
-| `*` | `NotFound` | `src/pages/NotFound.tsx` | Custom 404 page for unmatched routes with home navigation. | No |
-
----
-
-## 5. Components
-
-### Layout Components
-
-| Component | File Location | Purpose & Important Props | Where Used |
-| :--- | :--- | :--- | :--- |
-| `Header` | `src/components/layout/Header.tsx` | Sticky header with phone/address top bar, desktop navigation dropdowns, mobile sliding drawer, and registration CTA button. | Inside `Layout` in `src/App.tsx` |
-| `Footer` | `src/components/layout/Footer.tsx` | 4-column footer with brand summary, vector social links (Instagram, X, YouTube), quick links, sports directory, contact info, and back-to-top button. | Inside `Layout` in `src/App.tsx` |
-| `Layout` | `src/App.tsx` | Page wrapper enclosing `Header`, main content `<main>`, `Footer`, and floating WhatsApp action button. | Wraps all routes in `src/App.tsx` |
-| `ScrollToTop`| `src/App.tsx` | Invisible utility component that listens to `useLocation().pathname` and scrolls the window to `(0, 0)` smoothly on every page change. | Top-level child of `<BrowserRouter>` in `src/App.tsx` |
-
-### UI Primitives
-
-| Component | File Location | Purpose & Key Props | Where Used |
-| :--- | :--- | :--- | :--- |
-| `Button` | `src/components/ui/Button.tsx` | Reusable button or link supporting variants (`primary`, `secondary`, `outline`, `ghost`, `white`, `gold`), sizes (`sm`, `md`, `lg`), `href` (renders `<Link>` or `<a>`), `disabled`, and `fullWidth`. | Throughout all pages and modals |
-| `Logo` | `src/components/ui/Logo.tsx` | Brand badge with gradient 'Q' container, gold bottom accent, and bilingual English/Arabic lettering. Props: `variant?: 'default' \| 'white'`, `size?: 'sm' \| 'md' \| 'lg'`. | In `Header.tsx` and `Footer.tsx` |
-| `PageHeader` | `src/components/ui/PageHeader.tsx` | Page hero banner with ambient radial glow, breadcrumb links, badge, main `h1` title, and subtitle. Props: `title`, `subtitle`, `breadcrumbs`, `badge`. | At the top of all inner pages |
-| `SectionHeader`| `src/components/ui/SectionHeader.tsx`| Standardized section header with `h2` title, red highlight text, description, and light/dark theme toggle. Props: `title`, `highlight`, `description`, `centered`, `light`. | Across `Home`, `About`, `Sports`, `Programs`, `Subscriptions` |
-| `SportIcon` | `src/components/ui/SportIcon.tsx` | Vector icon resolver that maps `sportId` strings (`football`, `basketball`, `swimming`, `karate`, `kickboxing`, `gymnastics`, `roller-skating`) to clean Lucide icons with consistent stroke and props. | In `Home.tsx`, `Sports.tsx`, `SportDetail.tsx`, `Programs.tsx` |
-
----
-
-## 6. Application Architecture
-
-```mermaid
-graph TD
-    User([User Browser]) -->|HTTP Request| HTML[index.html]
-    HTML --> Main[src/main.tsx]
-    Main --> App[src/App.tsx]
-    
-    subgraph Routing & Layout
-        App --> Router[BrowserRouter]
-        Router --> Scroll[ScrollToTop]
-        Router --> Shell[Layout Shell]
-        Shell --> Hdr[Header]
-        Shell --> ActivePage[Active Route / Page Component]
-        Shell --> Ftr[Footer]
-        Shell --> WApp[Floating WhatsApp Button]
-    end
-
-    subgraph Page Views
-        ActivePage --> Home[Home.tsx]
-        ActivePage --> Sports[Sports.tsx / SportDetail.tsx]
-        ActivePage --> Sched[Schedule.tsx]
-        ActivePage --> Subs[Subscriptions.tsx]
-        ActivePage --> Reg[Register.tsx]
-        ActivePage --> Blog[Blog.tsx / Article.tsx]
-        ActivePage --> Info[About / Contact / FAQ / Terms / Privacy]
-    end
-
-    subgraph Data & Assets Layer
-        Data[src/data/*.ts] -->|Static Typed Data| ActivePage
-        Types[src/types/index.ts] -->|Type Interfaces| Data
-        Types -->|Type Interfaces| ActivePage
-        PublicImg[/public/images/*] -->|Bundled Assets| ActivePage
-        UIComp[src/components/ui/*] -->|Primitives & Icons| ActivePage
-    end
-```
-
-### Communication & Flow:
-1. **Entry Point**: `src/main.tsx` mounts the React application into the `#root` DOM element in `index.html`.
-2. **Layout Pipeline**: `src/App.tsx` wraps all routes inside `<BrowserRouter>` and a shared `<Layout>` component, guaranteeing uniform navigation and footer across all pages.
-3. **Data Distribution**: Page components import structured data collections directly from `src/data/*.ts` using contracts defined in `src/types/index.ts`.
-4. **Client-Side Rendering**: Fast route transitions occur entirely in memory without full-page browser reloads.
-
----
-
-## 7. User Flow
-
-### 1. Sport Discovery & Deep-Dive Flow
-```
-Home (/) OR Sports Directory (/sports)
-   └── Click Sport Card (e.g. Football)
-         └── Navigate to /sports/football (SportDetail)
-               ├── Review Sport Description & Technical Features
-               ├── Inspect Training Levels (Beginner → Championship)
-               ├── Check Weekly Schedule for that specific sport
-               └── Click "سجّل الآن" (Register CTA)
-                     └── Redirects to /register with pre-informed intent
-```
-
-### 2. Timetable & Capacity Check Flow
-```
-User navigates to /schedule
-   ├── Filter by Sport (All, Football, Basketball, Swimming, etc.)
-   ├── Filter by Day of Week (Sunday through Saturday)
-   ├── View real-time Capacity Progress Bars (Enrolled vs. Max Capacity)
-   ├── Notice "مقاعد محدودة" (Limited Seats) warnings for sessions ≥ 85% full
-   └── Click "سجّل واحجز مقعدك" → Redirects to /register
-```
-
-### 3. Subscription & Plan Comparison Flow
-```
-User navigates to /subscriptions
-   ├── Toggle billing cycle between "اشتراك شهري" (Monthly) and "اشتراك ربع سنوي" (Quarterly - 10% off)
-   ├── Compare Basic, Advanced (Popular), and Elite Tier benefits
-   ├── Review detailed Feature Comparison Matrix table
-   ├── Read Subscription FAQs
-   └── Click "اشترك الآن" on preferred tier → Proceeds to /register
-```
-
-### 4. 3-Step Athlete Registration Flow
-```
-User opens /register
-   ├── Step 1: Student Information (Name, Age [3-25], Gender, Medical conditions)
-   │     └── Client-side validation → Click "التالي" (Next)
-   ├── Step 2: Guardian Information (Name, Mobile [05XXXXXXXX], Email, Relation)
-   │     └── Format & required validation → Click "التالي" (Next)
-   ├── Step 3: Sport & Level Selection (Choose 1 of 7 sports, pick skill tier, agree to Terms & Privacy)
-   │     └── Click "تأكيد وإرسال الطلب" (Submit)
-   └── Confirmation View: Summary card displays submitted athlete details with guidance on the free assessment session.
-```
-
----
-
-## 8. State Management & Data Flow
-
-* **Global State**: Managed via URL path and React Router (`useLocation`, `useParams`). Because the application relies on static content and stateless form workflows, no heavyweight global store (like Redux or Zustand) is required.
-* **Local State**: Managed with React's built-in hooks:
-  * `useState`: Controls filter states (`selectedSport`, `selectedDay`, `selectedCategory`), multi-step wizard step (`step`), active accordion IDs (`openId`), and form input models (`formData`, `errors`, `submitted`).
-  * `useMemo`: Computes filtered and grouped arrays (e.g., in `Schedule.tsx` to group sessions by day and apply sport/day filter intersections with zero lag).
-  * `useEffect`: Handles window scroll listeners (e.g., sticky header shadow on `window.scrollY > 20`), page scroll restoration on route changes, and mobile drawer body scroll locking.
-* **Data Flow**: Pure unidirectional top-down data flow from static data modules in `src/data/` down to presentational components via typed props.
-
----
-
-## 9. API & Backend Integration
-
-> [!NOTE]
-> **No External Backend or API Server**: The current version of this application is a **pure client-side static application**.
-
-* Form submissions in `Register.tsx` and `Contact.tsx` validate input data in the browser and transition to client-side success confirmation views without making remote HTTP `fetch` or `axios` calls.
-* All data records (sports, pricing tiers, schedules, articles, FAQs) are bundled in TypeScript files in `src/data/`.
-* When adding a backend in the future (e.g. Supabase, Firebase, Node/Express, or serverless functions), API handlers can be plugged into `handleSubmit` in `Register.tsx` and `Contact.tsx`.
-
----
-
-## 10. Environment Variables
-
-The project does not currently require any environment variables to run or build.
-
-If integrating third-party services in the future (e.g. payment gateway, backend API, analytics), create a `.env` file in the project root:
-
+### 4.1 Environment Template (`.env.example`)
+A template file `.env.example` is tracked in the repository:
 ```env
-# Example future environment variables
-VITE_API_BASE_URL=
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+# Public Frontend Variables (Safe for client bundle)
+VITE_SANITY_PROJECT_ID=s4sblwvk
+VITE_SANITY_DATASET=production
+
+# Migration / Admin Secrets (NEVER expose to frontend, NEVER prefix with VITE_)
+SANITY_AUTH_TOKEN=
 ```
 
-All client-facing environment variables in Vite must be prefixed with `VITE_`.
+### 4.2 Local Setup Instructions
+To configure your local environment:
+1. Duplicate `.env.example` to create `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. For migration tasks, open `.env` and insert your Sanity write token:
+   ```env
+   SANITY_AUTH_TOKEN=sk...your_token_here...
+   ```
+
+### 4.3 Environment Variable Rules & Matrix
+
+| Variable | Scope | Required Where | Safe to Expose in Client Bundle? | Notes |
+| :--- | :--- | :--- | :---: | :--- |
+| `VITE_SANITY_PROJECT_ID` | Frontend & Migration | Local & Vercel | **YES** | Public Sanity project identifier (`s4sblwvk`). Defaults automatically if omitted. |
+| `VITE_SANITY_DATASET` | Frontend & Migration | Local & Vercel | **YES** | Public dataset name (`production`). Defaults automatically if omitted. |
+| `SANITY_AUTH_TOKEN` | Migration Script ONLY | Local CLI | **NO (CRITICAL SECRET)** | **Must NEVER have `VITE_` prefix.** Never add this to client code, browser bundles, or Vercel client environment. |
+
+> [!CAUTION]
+> **CRITICAL SECURITY REQUIREMENT**:
+> - Never prefix `SANITY_AUTH_TOKEN` with `VITE_`. Vite automatically bundles any variable prefixed with `VITE_` into client JavaScript files.
+> - Never commit `.env`, `.env.local`, or any file containing real token values to git. The `.gitignore` is configured to block all local env files.
+> - `npm run build` strictly checks and verifies that no write tokens or secrets exist in the output bundle.
+
+### 4.4 Vercel Environment Variables
+When deploying the frontend to Vercel, configure only the public variables in **Project Settings > Environment Variables**:
+- `VITE_SANITY_PROJECT_ID` = `s4sblwvk`
+- `VITE_SANITY_DATASET` = `production`
+
+**Do NOT add `SANITY_AUTH_TOKEN` to Vercel**, as the frontend build only performs read operations against published Sanity documents via CDN.
 
 ---
 
-## 11. Installation & Setup
+## 5. Sanity CMS & Studio
+
+### Sanity Configuration
+* **Project ID**: `s4sblwvk`
+* **Dataset**: `production`
+* **API Version**: `2024-03-01`
+* **CDN Enabled**: `true` (Fast, edge-cached responses)
+
+### Running Sanity Studio Locally
+To start the Sanity Studio dashboard:
+```bash
+npm run studio
+```
+Open [http://localhost:3333](http://localhost:3333) in your browser to log in and manage content.
+
+### Studio Structure
+The Studio is organized into 4 intuitive categories tailored for non-technical administrators:
+
+1. 📂 **Content Management (إدارة المحتوى)**
+   - 🏆 **Sports & Programs (الرياضات والبرامج)**: Manage 7 sports, age groups, features, schedules, training levels, and gallery images.
+   - 🏷️ **Special Offers (العروض والخصومات)**: Manage seasonal discount banners, original/discounted prices, promo codes, and expiry dates.
+   - 📝 **Blog Articles (المقالات الرياضية)**: Create and publish educational articles, categories, author details, and SEO tags.
+   - 📂 **Blog Categories (تصنيفات المقالات)**: Categorize sports content (Nutrition, Training Tips, Youth Development).
+   - ⭐ **Testimonials (آراء وتجارب أولياء الأمور)**: Manage verified Google review cards, parent names, child sports, and 5-star ratings.
+
+2. ⚙️ **Global Settings & UI (الإعدادات العامة والنصوص)**
+   - 🌐 **Site Settings (إعدادات الموقع العامة)**: Manage academy title, contact phone numbers, WhatsApp numbers, email, physical address, working hours, and social media links.
+   - 🔤 **UI Labels & Common Texts (نصوص وواجهة الموقع)**: Edit all global button labels, badges, search placeholders, empty states, and section headings in Arabic and English.
+   - 🧭 **Navigation Menu (القائمة الرئيسية)**: Customize top header navigation links and visibility toggles.
+   - 📋 **Footer Content (تذييل الصفحة)**: Customize footer columns, descriptions, quick links, and copyright text.
+   - 💳 **Payment & Installments (طرق الدفع والتقسيط)**: Configure Tabby, Tamara, and payment guarantee highlights.
+
+3. 📊 **Analytics & Marketing (التحليلات والتسويق)**
+   - 📈 **Tracking & Pixels (أكواد التتبع والتحليلات)**: Safely manage Google Analytics 4 (GA4), Meta Pixel, Microsoft Clarity, Google Ads Conversion ID, and Google Tag Manager (GTM).
+
+4. ⚖️ **Legal Policies (السياسات القانونية)**
+   - 🔒 **Privacy Policy (سياسة الخصوصية)**: Full localized legal terms and user data governance.
+   - 📜 **Terms & Conditions (الشروط والأحكام)**: Academy rules, membership policies, and safety guidelines.
+
+---
+
+## 6. Safe Analytics & Tracking System
+
+The project features a **Safe Script Injection Manager** (`src/lib/analytics/tracker.ts`) that guarantees:
+- **No Duplicate Scripts**: Detects already loaded scripts in the DOM before injecting new ones.
+- **Dynamic Re-initialization**: Safely handles ID changes from Sanity without crashing the browser or reloading the page.
+- **Enabled/Disabled Respect**: Only initializes providers with active toggle flags and valid ID formats.
+- **Secret Isolation**: Operates strictly with public client-side measurement IDs.
+
+### Supported Providers
+1. **Google Analytics 4 (GA4)**: `G-XXXXXXXXXX`
+2. **Meta Pixel (Facebook)**: Numeric Pixel ID
+3. **Microsoft Clarity**: Project ID
+4. **Google Ads**: `AW-XXXXXXXXXX` with optional conversion labels
+5. **Google Tag Manager (GTM)**: `GTM-XXXXXXX`
+
+### Tracked Business Events
+- `page_view`: Automatically dispatched on route transitions via React Router.
+- `whatsapp_click`: Fired on every WhatsApp CTA with source context (`sport_detail`, `offer_card`, `floating_button`, `header`).
+- `sport_view`: Fired when a parent views a specific sport page.
+- `offer_view`: Fired when an offer package is inspected.
+- `blog_view`: Fired when an educational article is opened.
+- `search_query`: Fired on search queries in the Blog.
+- `language_switch`: Fired when the user switches between Arabic and English.
+
+---
+
+## 7. Content Migration
+
+An idempotent, non-destructive migration script is provided at `scripts/migrate-to-sanity.mjs`.
+
+### How to Run Migration:
+1. Ensure your `SANITY_AUTH_TOKEN` is set in your local `.env` file or pass it directly in the command:
+   ```bash
+   # Method 1: Reading from .env
+   npm run migrate:sanity
+
+   # Method 2: Passing directly in shell
+   SANITY_AUTH_TOKEN="sk..." npm run migrate:sanity
+   ```
+
+### Safety Features:
+- Uses `createIfNotExists()` with deterministic document IDs (`sport-football`, `offer-quarterly-pack`, `site-settings`, `ui-labels-main`, etc.).
+- **Zero-Destruction Guarantee**: Running this script will never overwrite or erase changes made by administrators in Sanity Studio.
+- Frontend builds (`npm run build`) and Vercel production deployments **never** run this script automatically and **never** mutate Sanity data.
+
+---
+
+## 8. Development & Deployment
 
 ### Prerequisites
-* **Node.js**: `v18.0.0` or higher (`v20+` recommended)
-* **Package Manager**: `npm` (comes with Node.js), `pnpm`, or `yarn`
+- Node.js `18.x` or `>=20.x`
+- npm `9.x` or `>=10.x`
 
-### Setup Instructions
-
-1. **Clone or Navigate to the Project Root**:
-   ```bash
-   cd "d:/front end dev/alqima-sports-"
-   ```
-
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start the Local Development Server**:
-   ```bash
-   npm run dev
-   ```
-   * Open your browser at the local URL printed in the terminal (typically `http://localhost:5173`).
-
----
-
-## 12. Available Commands
-
-All scripts are configured in `package.json`:
-
-| Command | Action |
-| :--- | :--- |
-| `npm run dev` | Starts the Vite development server with instant Hot Module Replacement (HMR). |
-| `npm run build` | Compiles TypeScript and runs `vite build` using `vite-plugin-singlefile` to output `dist/index.html`. |
-| `npm run preview` | Locally serves the built production bundle in `dist/` to verify production behavior before deployment. |
-
----
-
-## 13. Build & Deployment
-
-### Production Build
-
-Run the build command:
+### Available NPM Scripts
 ```bash
-npm run build
-```
-
-* **Build Output**: `dist/index.html` (approx. ~490 kB, ~129 kB gzipped).
-* **Single-File Bundling**: The `vite-plugin-singlefile` plugin inlines all JavaScript code, CSS stylesheets, and SVGs directly into a single HTML file.
-
-### Deployment Targets
-Because the build produces standard static files (or a single HTML file), it can be deployed to:
-1. **Vercel**: Deploy the root folder or connect your Git repository. Output directory is `dist`.
-2. **Netlify**: Set build command to `npm run build` and publish directory to `dist`.
-3. **Cloudflare Pages / GitHub Pages**: Deploy the `dist/` folder directly.
-4. **Any Traditional Web Server (Nginx, Apache, Caddy)**: Upload `dist/index.html` to your `public_html` root.
-
----
-
-## 14. Authentication & Authorization
-
-* **Current Status**: There is **no authentication system** currently implemented.
-* All routes, program details, timetables, and articles are public.
-* No protected route guards, JWT tokens, cookies, or user sessions exist in the present codebase.
-
----
-
-## 15. Database
-
-* **Current Status**: There is **no external database**.
-* **Data Layer**: Static, in-memory data structures defined in `src/data/`:
-  * `sports.ts`: 7 sport records with IDs, Arabic titles, descriptions, image paths, levels, and features.
-  * `subscriptions.ts`: Monthly and Quarterly plan models with pricing and feature lists.
-  * `schedule.ts`: 25 weekly training slots with days, times, coaches, venues, and capacity limits.
-  * `blog.ts`: 3 detailed sports articles with tags, timestamps, and authors.
-  * `faq.ts`: 14 categorized questions and answers.
-
----
-
-## 16. UI & Design System
-
-### Color Palette
-
-| Token Name | Hex Code | Purpose & Usage |
-| :--- | :--- | :--- |
-| `--color-primary` | `#D90429` | Crimson Red — Primary brand color, main CTA buttons, badges, highlights |
-| `--color-primary-dark` | `#B0021F` | Dark Crimson — Hover states for primary buttons and accents |
-| `--color-navy` | `#18213F` | Deep Navy — Headers, hero backgrounds, primary text, high-contrast sections |
-| `--color-navy-light` | `#2A3660` | Light Navy — Sub-headers, secondary card backgrounds |
-| `--color-gold` | `#FFC400` | Victory Gold — Rating stars, sub-accents, special program highlights |
-| `--color-silver` | `#5A6E85` | Accessible Slate/Silver — Body text, captions, secondary labels (WCAG AA compliant) |
-| `--color-light` | `#F2F3F5` | Light Gray — Section backgrounds, table alternate rows, card backgrounds |
-| `--color-light-2` | `#E8EAF0` | Border Gray — Card borders, input outlines, divider lines |
-
-### Typography
-* **Heading Font**: `Cairo` (Weights: 700, 800, 900) — used for all headings, titles, price numbers, and primary buttons.
-* **Body Font**: `Tajawal` & `Cairo` (Weights: 400, 500, 600) — used for readable body copy, descriptions, and lists.
-* **Tabular Numbers**: `font-variant-numeric: tabular-nums` enabled globally for prices, timestamps, phone numbers, capacities, and step numbers.
-
-### Directionality & RTL
-* `dir="rtl"` and `lang="ar"` defined on the root `<html>` tag in `index.html`.
-* Forward motion and link arrows use `ArrowLeft` or `ChevronLeft` to adhere to native Right-to-Left reading flow.
-
-### Browser Surfaces
-* **Text Selection**: Custom crimson background `::selection { background-color: #D90429; color: #FFFFFF; }`.
-* **Focus Rings**: Accessible `:focus-visible { outline: 2px solid #D90429; outline-offset: 2px; }`.
-* **Caret Color**: `caret-color: #D90429` across all form fields.
-* **Scrollbar**: Themed crimson thumb and light gray track.
-
----
-
-## 17. Business Logic
-
-1. **Age-Tier Categorization**:
-   * **Mini (الناشئون المصغر)**: Ages 3–6 (45 min sessions, Gymnastics, Swimming, Skating).
-   * **Beginners (الناشئون الأساسي)**: Ages 7–10 (60–75 min sessions, foundational skills).
-   * **Youth (الشباب والتطوير)**: Ages 11–15 (90 min sessions, league and tournament prep).
-   * **Elite (النخبة والاحتراف)**: Ages 16+ (120 min sessions, high-performance coaching).
-
-2. **Session Capacity Thresholds**:
-   * Progress percentage: `(enrolled / capacity) * 100`.
-   * Warning badge (`مقاعد محدودة` / Orange) triggers automatically when enrollment reaches $\ge 85\%$.
-
-3. **Quarterly Subscription Pricing**:
-   * Quarterly subscriptions offer a 10% discount compared to 3 months of monthly rates (e.g., Basic Monthly = 299 SAR/mo vs. Basic Quarterly = 799 SAR/3mo).
-
-4. **Form Validation Rules**:
-   * Student Age: Integer between 3 and 25 years.
-   * Phone Number: Regex `/^[0-9+\s-]{9,15}$/`.
-   * Email: Standard RFC-compliant regex pattern.
-   * Compulsory Terms & Privacy agreement before final step submission.
-
----
-
-## 18. Important Files
-
-| File Path | Description & Responsibility |
-| :--- | :--- |
-| `src/App.tsx` | Main routing map defining all 15 routes, Layout wrapper, and scroll restoration. |
-| `src/index.css` | Tailwind v4 theme definitions, typography styling, custom scrollbars, animations, and focus ring tokens. |
-| `src/data/sports.ts` | The single source of truth for all 7 sports programs, features, age ranges, and skill levels. |
-| `src/data/schedule.ts` | Timetable data model specifying days, times, durations, coaches, venues, and enrollment metrics. |
-| `src/pages/Register.tsx` | Interactive 3-step athlete registration form with step management, error validation, and summary screen. |
-| `src/pages/Schedule.tsx` | Weekly timetable view featuring sport & day filtering algorithms and seat capacity indicators. |
-| `src/pages/Subscriptions.tsx` | Pricing table, monthly/quarterly toggle, and feature comparison matrix. |
-| `src/components/ui/SportIcon.tsx` | Dynamic SVG vector icon mapper linking sport identifiers to Lucide icons. |
-| `src/components/layout/Header.tsx` | Top info bar, sticky navigation, nested dropdowns, and responsive mobile navigation drawer. |
-| `vite.config.ts` | Build configuration enabling React, Tailwind CSS v4, and single-file inlining. |
-| `PRODUCT.md` | Strategic product requirements, brand commitments, and user persona documentation. |
-
----
-
-## 19. Current Project Status
-
-### Completed
-- [x] Full 15-page client-side routing and responsive layout.
-- [x] RTL Arabic typography integration with Google Fonts (`Cairo`, `Tajawal`).
-- [x] 7 dedicated sports programs with dynamic route detail view (`/sports/:sportId`).
-- [x] Timetable system with multi-criteria filtering and capacity progress indicators.
-- [x] Subscriptions view with Monthly/Quarterly toggle and comparison table.
-- [x] 3-step interactive registration wizard with step validation and success state.
-- [x] FAQ search and category filter with CSS grid accordion animation.
-- [x] Sports blog with search, category filtering, and full article reader.
-- [x] Contact page with validated feedback form and direct WhatsApp link.
-- [x] High-contrast accessible color palette complying with WCAG 2.1 AA.
-- [x] 0 compiler/linter warnings and clean single-file production build.
-
-### In Progress
-- [ ] Backend persistence for registration submissions (currently displays client-side confirmation).
-- [ ] Contact form email dispatch (currently validates and displays client-side confirmation).
-
-### Known Issues
-- None. All pages render cleanly, routes resolve without errors, and the production build compiles with exit code 0.
-
-### TODO / Next Steps
-- Connect registration form to a database or webhook (e.g. Supabase, Firebase, or an email service).
-- Add Arabic/English language toggle if bilingual support is requested in the future.
-
----
-
-## 20. Troubleshooting
-
-### 1. `vite: not found` during build
-* **Cause**: `node_modules` not installed or missing local binaries.
-* **Fix**: Run `npm install` in the project root directory.
-
-### 2. Single-File Bundle Notes
-* **Behavior**: `vite-plugin-singlefile` inlines images and scripts into `dist/index.html`.
-* **Note**: If you prefer separate `.js` and `.css` asset chunks (for CDN caching), remove `viteSingleFile()` from the plugins array in `vite.config.ts`.
-
-### 3. RTL Alignment Quirks in Non-Arabic Browsers
-* **Check**: Ensure `dir="rtl"` and `lang="ar"` are present on the `<html>` element in `index.html`.
-
----
-
-## 21. Future Development & Possible Improvements
-
-### Possible Improvements
-1. **Backend Integration**: Connect form submissions to a PostgreSQL / Supabase backend for managing student registrations and coach schedules.
-2. **Online Payment Gateway**: Integrate Saudi payment gateways (Mada, Apple Pay, Moyasar, HyperPay, or Stripe) for instant subscription checkout.
-3. **Parent / Student Portal**: Create an authenticated dashboard where parents can track their athlete's attendance, monthly evaluation reports, and tournament fixtures.
-4. **Bilingual Support (i18n)**: Implement `react-i18next` to offer an optional English locale alongside Arabic.
-5. **Coach Management Panel**: A portal for coaches to take attendance, record fitness metrics, and publish evaluation reports.
-
----
-
-## 22. Developer Quick Start
-
-To start working on the project right away:
-
-```bash
-# 1. Navigate to the project folder
-cd "d:/front end dev/alqima-sports-"
-
-# 2. Install dependencies
-npm install
-
-# 3. Start development server
+# Start Vite development server for the frontend
 npm run dev
 
-# 4. Open in browser
-# Visit http://localhost:5173
+# Start Sanity Studio locally (http://localhost:3333)
+npm run studio
 
-# 5. Build for production
+# Build production bundle for the frontend
 npm run build
+
+# Build standalone Sanity Studio bundle
+npm run studio:build
+
+# Preview production build locally
+npm run preview
+
+# Run deterministic content migration to Sanity
+npm run migrate:sanity
 ```
 
-* **To modify sports or schedule**: Edit `src/data/sports.ts` or `src/data/schedule.ts`.
-* **To add/modify pages**: Edit `src/pages/` and register the route in `src/App.tsx`.
-* **To adjust colors or styles**: Edit `src/index.css`.
+### Vercel Production Deployment
+1. Connect the GitHub repository to Vercel.
+2. Build Settings:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+3. Add Environment Variables (optional, defaults are built-in):
+   - `VITE_SANITY_PROJECT_ID`: `s4sblwvk`
+   - `VITE_SANITY_DATASET`: `production`
+4. The build produces a single, highly optimized distribution bundle that connects directly to the Sanity Content Lake via public CDN.
+
+---
+
+## 9. License & Ownership
+Copyright © 2026 ALQIMA Sports Academy (أكاديمية القمة الرياضية), Jeddah, Saudi Arabia. All rights reserved.

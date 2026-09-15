@@ -8,7 +8,6 @@ import {
   Sparkles, 
   Zap, 
   Trophy,
-  Target,
   LucideProps
 } from 'lucide-react';
 
@@ -18,7 +17,8 @@ interface SportIconProps extends LucideProps {
 }
 
 export const SportIcon: React.FC<SportIconProps> = ({ sportId, className = '', ...props }) => {
-  switch (sportId) {
+  const normalizedId = (sportId || '').toLowerCase().replace(/^sport-/, '');
+  switch (normalizedId) {
     case 'football':
       return <Activity className={className} {...props} />;
     case 'basketball':
@@ -32,6 +32,7 @@ export const SportIcon: React.FC<SportIconProps> = ({ sportId, className = '', .
     case 'gymnastics':
       return <Sparkles className={className} {...props} />;
     case 'roller-skating':
+    case 'skating':
       return <Zap className={className} {...props} />;
     default:
       return <Trophy className={className} {...props} />;

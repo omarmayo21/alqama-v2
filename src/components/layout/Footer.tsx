@@ -4,12 +4,15 @@ import { Phone, Mail, MapPin, ArrowUp, MessageCircle } from 'lucide-react';
 import Logo from '../ui/Logo';
 import { WHATSAPP_URL, ACADEMY_PHONE, ACADEMY_PHONE_DISPLAY } from '../../utils/constants';
 import { useLanguage } from '../../context/LanguageContext';
+import { useSanityData } from '../../context/SanityDataContext';
 import { translations } from '../../data/translations';
 import ScrollReveal from '../animation/ScrollReveal';
 
 const Footer: React.FC = () => {
   const { language } = useLanguage();
+  const { siteSettings, loc } = useSanityData();
   const t = translations[language];
+  const addressDisplay = loc(siteSettings?.addressAr, siteSettings?.addressEn, t.footer.locationText);
   const basePath = language === 'en' ? '/en' : '';
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -29,7 +32,6 @@ const Footer: React.FC = () => {
     { label: t.nav.sports, path: `${basePath}/sports` },
     { label: t.nav.offers, path: `${basePath}/offers` },
     { label: t.nav.blog, path: `${basePath}/blog` },
-    { label: language === 'en' ? 'FAQ' : 'الأسئلة الشائعة', path: `${basePath}/faq` },
   ];
 
   return (
@@ -185,9 +187,7 @@ const Footer: React.FC = () => {
                       {language === 'en' ? 'Address' : 'العنوان'}
                     </p>
                     <p className="text-white/90 text-sm">
-                      {language === 'en'
-                        ? 'Al Rawdah District, Jeddah, Saudi Arabia'
-                        : 'جدة، حي الروضة، المملكة العربية السعودية'}
+                      {addressDisplay}
                     </p>
                   </div>
                 </div>
@@ -216,12 +216,7 @@ const Footer: React.FC = () => {
             >
               {t.footer.terms}
             </Link>
-            <Link
-              to={`${basePath}/faq`}
-              className="text-white/60 hover:text-white text-sm transition-colors"
-            >
-              {language === 'en' ? 'FAQ' : 'الأسئلة الشائعة'}
-            </Link>
+
           </div>
           <button
             onClick={scrollToTop}

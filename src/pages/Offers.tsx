@@ -6,13 +6,32 @@ import SectionHeader from '../components/ui/SectionHeader';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { WHATSAPP_URL, getWhatsAppUrl } from '../utils/constants';
 import { useLanguage } from '../context/LanguageContext';
+import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
 
 const Offers: React.FC = () => {
   const { language } = useLanguage();
+  const { offers: sanityOffers, t: cmsT } = useSanityData();
   const t = translations[language];
   const currentOffers = language === 'en' ? offersEn : offers;
   const currentSpecialOffers = language === 'en' ? specialOffersEn : specialOffers;
+
+  const displayedOffers = React.useMemo(() => {
+    if (sanityOffers && sanityOffers.length > 0) {
+      return sanityOffers.map((o, idx) => ({
+        id: o.slug || o._id || `offer-${idx}`,
+        title: cmsT(o.title, currentOffers[idx]?.title || ''),
+        tagline: cmsT(o.tagline, currentOffers[idx]?.tagline || ''),
+        badge: cmsT(o.badge, currentOffers[idx]?.badge || ''),
+        description: cmsT(o.description, currentOffers[idx]?.description || ''),
+        features: o.features && o.features.length > 0
+          ? o.features.map(f => typeof f === 'object' ? cmsT(f as any, '') : f)
+          : (currentOffers[idx]?.features || []),
+        popular: o.isPopular || currentOffers[idx]?.popular || false,
+      }));
+    }
+    return currentOffers;
+  }, [sanityOffers, currentOffers, cmsT]);
 
   return (
     <div>
@@ -35,7 +54,7 @@ const Offers: React.FC = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {currentOffers.map((offer, idx) => (
+            {displayedOffers.map((offer, idx) => (
               <ScrollReveal key={offer.id} delay={idx * 90}>
                 <div
                   className={`bg-white rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between border h-full ${
@@ -78,11 +97,10 @@ const Offers: React.FC = () => {
                           {offer.features.map((f, i) => (
                             <li key={i} className="flex items-start gap-3">
                               <CheckCircle
-                                size={18}
-                                className="flex-shrink-0 mt-0.5"
-                                style={{ color: offer.popular ? '#D90429' : '#18213F' }}
+                                size={16}
+                                className="text-[#D90429] flex-shrink-0 mt-0.5"
                               />
-                              <span className="text-[#18213F] font-semibold text-sm">{f}</span>
+                              <span className="text-[#18213F] text-sm font-semibold">{f}</span>
                             </li>
                           ))}
                         </ul>
@@ -90,24 +108,23 @@ const Offers: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* CTA Action */}
-                  <div className="p-8 pt-0">
+                  {/* Card Action */}
+                  <div className="p-8 pt-0 mt-auto">
                     <a
                       href={getWhatsAppUrl(
                         language === 'en'
-                          ? `Hello ALQIMA Academy, I would like to inquire about details for the ${offer.title}.`
-                          : `مرحباً أكاديمية القمة، أود الاستفسار عن تفاصيل ${offer.title}`
+                          ? `Hello, I would like to inquire about the ${offer.title} package at ALQIMA Sports Academy.`
+                          : `السلام عليكم، أود الاستفسار والتسجيل في ${offer.title} بأكاديمية القمة الرياضية.`
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center justify-center gap-2 w-full text-center py-4 rounded-xl font-bold text-base transition-all duration-300 hover:-translate-y-0.5 ${
+                      className={`w-full py-4 rounded-xl font-bold text-center block transition-all duration-300 shadow-md ${
                         offer.popular
-                          ? 'bg-[#D90429] text-white hover:bg-[#B0021F] shadow-lg shadow-red-200'
-                          : 'bg-[#18213F] text-white hover:bg-[#2A3660]'
+                          ? 'bg-[#D90429] text-white hover:bg-[#B0021F] shadow-red-200 hover:-translate-y-0.5'
+                          : 'bg-[#18213F] text-white hover:bg-[#222D52] hover:-translate-y-0.5'
                       }`}
                     >
-                      <MessageCircle size={18} />
-                      <span>{t.offersPage.whatsappCta}</span>
+                      {t.offersSection.ctaButton}
                     </a>
                   </div>
                 </div>
@@ -191,8 +208,8 @@ const Offers: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 text-[#18213F] shadow-lg flex flex-col justify-between card-hover">
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="text-2xl font-black tracking-tight text-[#2EE09A] bg-[#18213F] px-4 py-1.5 rounded-xl inline-block font-sans">
-                        tabby
+                      <div className="bg-[#18213F] px-4 py-2 rounded-xl inline-flex items-center justify-center">
+                        <img src="/images/tabby-logo.png" alt="Tabby" className="h-6 w-auto object-contain" />
                       </div>
                       <span className="text-xs font-bold text-[#5A6E85] bg-gray-100 px-3 py-1 rounded-full">
                         {language === 'en' ? 'Installment Payment' : 'دفع بالتقسيط'}
@@ -209,8 +226,8 @@ const Offers: React.FC = () => {
                 <div className="bg-white rounded-2xl p-6 text-[#18213F] shadow-lg flex flex-col justify-between card-hover">
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="text-2xl font-black tracking-tight text-[#FFA95A] bg-[#18213F] px-4 py-1.5 rounded-xl inline-block font-sans">
-                        tamara
+                      <div className="bg-[#18213F] px-4 py-2 rounded-xl inline-flex items-center justify-center">
+                        <img src="/images/tamara-logo.jpg" alt="Tamara" className="h-6 w-auto object-contain rounded" />
                       </div>
                       <span className="text-xs font-bold text-[#5A6E85] bg-gray-100 px-3 py-1 rounded-full">
                         {language === 'en' ? 'Installment Payment' : 'دفع بالتقسيط'}

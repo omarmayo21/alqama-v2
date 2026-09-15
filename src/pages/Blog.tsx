@@ -5,10 +5,12 @@ import { blogPosts, blogPostsEn, categories, categoriesEn } from '../data/blog';
 import PageHeader from '../components/ui/PageHeader';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { useLanguage } from '../context/LanguageContext';
+import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
 
 const Blog: React.FC = () => {
   const { language, isRTL } = useLanguage();
+  const { blogPosts: sanityBlogPosts, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentPosts = language === 'en' ? blogPostsEn : blogPosts;
@@ -16,16 +18,36 @@ const Blog: React.FC = () => {
   const allCategoryLabel = language === 'en' ? 'All' : 'الكل';
   const ChevronIcon = isRTL ? ChevronLeft : ChevronRight;
 
+  const displayedPosts = React.useMemo(() => {
+    if (sanityBlogPosts && sanityBlogPosts.length > 0) {
+      return sanityBlogPosts.map((p, i) => ({
+        id: p.slug || p._id || `blog-${i + 1}`,
+        title: cmsT(p.title, currentPosts[i]?.title || ''),
+        excerpt: cmsT(p.excerpt, currentPosts[i]?.excerpt || ''),
+        category: cmsT(p.category, currentPosts[i]?.category || (language === 'en' ? 'General' : 'عام')),
+        date: p.publishedAt
+          ? new Date(p.publishedAt).toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US')
+          : (typeof p.date === 'object' ? cmsT(p.date, '') : (p.date || currentPosts[i]?.date || '')),
+        readTime: language === 'en' ? (p.readTimeEn || currentPosts[i]?.readTime || '3 min read') : (p.readTimeAr || currentPosts[i]?.readTime || '٣ دقائق'),
+        image: p.imageUrl || p.coverImageUrl || currentPosts[i]?.image || `/images/blog-${(i % 4) + 1}.jpg`,
+        author: language === 'en' ? (p.authorNameEn || 'ALQIMA Coaching Team') : (p.authorNameAr || 'فريق تدريب القمة'),
+        content: typeof p.content === 'object' ? cmsT(p.content, '') : (p.content || currentPosts[i]?.content || ''),
+        tags: language === 'en' ? (p.tagsEn || currentPosts[i]?.tags || []) : (p.tagsAr || currentPosts[i]?.tags || []),
+      }));
+    }
+    return currentPosts;
+  }, [sanityBlogPosts, currentPosts, cmsT, language]);
+
   const [selectedCategory, setSelectedCategory] = useState(allCategoryLabel);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = currentPosts.filter((post) => {
+  const filtered = displayedPosts.filter((post) => {
     const catMatch = selectedCategory === allCategoryLabel || post.category === selectedCategory;
     const searchMatch = !searchQuery || post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return catMatch && searchMatch;
   });
 
-  const featured = currentPosts[0];
+  const featured = displayedPosts[0];
 
   return (
     <div>

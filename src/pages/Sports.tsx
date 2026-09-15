@@ -8,15 +8,35 @@ import SportIcon from '../components/ui/SportIcon';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { WHATSAPP_URL } from '../utils/constants';
 import { useLanguage } from '../context/LanguageContext';
+import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
 
 const Sports: React.FC = () => {
   const { language, isRTL } = useLanguage();
+  const { sports: sanitySports, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentSports = language === 'en' ? sportsEn : sports;
   const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
   const ChevronIcon = isRTL ? ChevronLeft : ChevronRight;
+
+  const displayedSports = React.useMemo(() => {
+    if (sanitySports && sanitySports.length > 0) {
+      return sanitySports.map((s) => {
+        const cleanId = s.slug || (s._id ? s._id.replace(/^sport-/, '') : '');
+        return {
+          id: cleanId,
+          name: cmsT(s.name, language === 'en' ? (s.nameEn || s.nameAr || '') : (s.nameAr || s.nameEn || '')),
+          nameAr: typeof s.name === 'object' ? s.name?.ar : s.nameAr || '',
+          nameEn: typeof s.name === 'object' ? s.name?.en : s.nameEn || '',
+          description: cmsT(s.description || s.shortDescription, language === 'en' ? (s.shortDescriptionEn || s.fullDescriptionEn || '') : (s.shortDescriptionAr || s.fullDescriptionAr || '')),
+          ageRange: cmsT(s.ageRange, language === 'en' ? (s.ageRangeEn || '') : (s.ageRangeAr || '')),
+          image: s.imageUrl || s.heroImageUrl || `/images/${cleanId}.jpg`,
+        };
+      });
+    }
+    return currentSports;
+  }, [sanitySports, currentSports, cmsT, language]);
 
   const trainingFeatures = language === 'en' ? [
     {
@@ -103,7 +123,7 @@ const Sports: React.FC = () => {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {currentSports.map((sport, idx) => (
+            {displayedSports.map((sport, idx) => (
               <ScrollReveal key={sport.id} delay={idx * 80}>
                 <div
                   className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col md:flex-row h-full"

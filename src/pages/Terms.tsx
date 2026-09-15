@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, ShieldAlert, ArrowLeft, ArrowRight, MessageCircle } from 'lucide-react';
+import { CheckCircle, ShieldAlert, MessageCircle } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { WHATSAPP_URL } from '../utils/constants';
@@ -11,18 +11,17 @@ const Terms: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
-  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
   const termsSections = language === 'en' ? [
     {
       title: 'General Terms & Conditions',
-      content: `Welcome to ALQIMA Sports Academy. These Terms and Conditions govern your use of our website and enrollment in our youth athletic programs.
+      content: `Welcome to ALQIMA Sports Academy. These Terms and Conditions govern your use of our website and enrollment in our children athletic programs.
 
 By accessing this website or enrolling in any academy program, you accept these terms in full. Please do not continue using our services if you do not agree to all terms stated on this page.`,
     },
     {
       title: 'Enrollment & Participation',
-      content: `• Enrollment is open to specified youth age groups according to academy criteria.
+      content: `• Enrollment is open to specified children age groups according to academy criteria.
 • Accurate, true, and complete information must be provided during the registration process.
 • Parents or legal guardians retain the right to enroll dependents under 18 years of age.
 • The academy reserves the right to decline or cancel any enrollment if submitted information is inaccurate.

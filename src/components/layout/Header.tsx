@@ -4,11 +4,14 @@ import { Menu, X, ChevronDown, Phone, MapPin, MessageCircle, Globe } from 'lucid
 import Logo from '../ui/Logo';
 import { WHATSAPP_URL, ACADEMY_PHONE, ACADEMY_PHONE_DISPLAY } from '../../utils/constants';
 import { useLanguage } from '../../context/LanguageContext';
+import { useSanityData } from '../../context/SanityDataContext';
 import { translations } from '../../data/translations';
 
 const Header: React.FC = () => {
   const { language, isRTL, toggleLanguage } = useLanguage();
+  const { siteSettings, loc } = useSanityData();
   const t = translations[language];
+  const addressDisplay = loc(siteSettings?.addressAr, siteSettings?.addressEn, t.footer.locationText);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -85,9 +88,7 @@ const Header: React.FC = () => {
               <div className="flex items-center gap-2 text-white/80">
                 <MapPin size={13} />
                 <span>
-                  {language === 'en'
-                    ? 'Jeddah, Kingdom of Saudi Arabia'
-                    : 'جدة، المملكة العربية السعودية'}
+                  {addressDisplay}
                 </span>
               </div>
             </div>

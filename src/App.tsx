@@ -9,12 +9,12 @@ import SportDetail from './pages/SportDetail';
 import Offers from './pages/Offers';
 import Blog from './pages/Blog';
 import Article from './pages/Article';
-import FAQ from './pages/FAQ';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import NotFound from './pages/NotFound';
 import { WHATSAPP_URL } from './utils/constants';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { SanityDataProvider } from './context/SanityDataContext';
 
 // Scroll to top on route change
 const ScrollToTop: React.FC = () => {
@@ -68,7 +68,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/offers" element={<Layout><Offers /></Layout>} />
         <Route path="/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/blog/:id" element={<Layout><Article /></Layout>} />
-        <Route path="/faq" element={<Layout><FAQ /></Layout>} />
         <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
         <Route path="/terms" element={<Layout><Terms /></Layout>} />
 
@@ -80,7 +79,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/en/offers" element={<Layout><Offers /></Layout>} />
         <Route path="/en/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/en/blog/:id" element={<Layout><Article /></Layout>} />
-        <Route path="/en/faq" element={<Layout><FAQ /></Layout>} />
         <Route path="/en/privacy" element={<Layout><Privacy /></Layout>} />
         <Route path="/en/terms" element={<Layout><Terms /></Layout>} />
 
@@ -95,7 +93,9 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <LanguageProvider>
-        <AppRoutes />
+        <SanityDataProvider>
+          <AppRoutes />
+        </SanityDataProvider>
       </LanguageProvider>
     </BrowserRouter>
   );

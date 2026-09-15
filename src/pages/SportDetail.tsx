@@ -9,24 +9,50 @@ import SportIcon from '../components/ui/SportIcon';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { getWhatsAppUrl } from '../utils/constants';
 import { useLanguage } from '../context/LanguageContext';
+import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
 
 const SportDetail: React.FC = () => {
   const { sportId } = useParams<{ sportId: string }>();
   const { language, isRTL } = useLanguage();
+  const { sports: sanitySports, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentSports = language === 'en' ? sportsEn : sports;
   const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
   const ChevronIcon = isRTL ? ChevronLeft : ChevronRight;
 
-  const sport = currentSports.find((s) => s.id === sportId);
+  const resolvedSport = React.useMemo(() => {
+    const cleanId = sportId ? sportId.replace(/^sport-/, '') : '';
+    const foundSanity = sanitySports?.find((s) => s.slug === sportId || s.slug === cleanId || s._id === sportId || s._id === `sport-${cleanId}`);
+    const foundStatic = currentSports.find((s) => s.id === sportId || s.id === cleanId);
 
-  if (!sport) return <Navigate to={basePath === '' ? '/sports' : `${basePath}/sports`} replace />;
+    if (foundSanity) {
+      return {
+        id: cleanId,
+        name: cmsT(foundSanity.name, foundStatic?.name || ''),
+        nameAr: typeof foundSanity.name === 'object' ? foundSanity.name?.ar : foundSanity.nameAr || foundStatic?.nameAr || '',
+        nameEn: typeof foundSanity.name === 'object' ? foundSanity.name?.en : foundSanity.nameEn || foundStatic?.name || '',
+        description: cmsT(foundSanity.description || foundSanity.shortDescription, foundStatic?.description || ''),
+        ageRange: cmsT(foundSanity.ageRange, foundStatic?.ageRange || ''),
+        image: foundSanity.imageUrl || foundSanity.heroImageUrl || foundStatic?.image || `/images/${cleanId}.jpg`,
+        features: foundSanity.features && foundSanity.features.length > 0 
+          ? foundSanity.features.map(f => typeof f === 'object' ? cmsT(f as any, '') : String(f))
+          : (foundStatic?.features || []),
+        levels: foundSanity.levels && foundSanity.levels.length > 0
+          ? foundSanity.levels.map(l => typeof l === 'object' ? cmsT(l as any, language === 'en' ? l.en || l.nameEn || '' : l.ar || l.nameAr || '') : String(l))
+          : (foundStatic?.levels || []),
+      };
+    }
+    return foundStatic;
+  }, [sanitySports, currentSports, sportId, cmsT, language]);
 
+  if (!resolvedSport) return <Navigate to={basePath === '' ? '/sports' : `${basePath}/sports`} replace />;
+
+  const sport = resolvedSport;
   const sportSchedule = scheduleItems.filter((s) => s.sportId === sportId);
   const otherSports = currentSports.filter((s) => s.id !== sportId).slice(0, 3);
-  const sportDisplayName = language === 'en' ? sport.name : sport.nameAr;
+  const sportDisplayName = language === 'en' ? sport.name : (sport.nameAr || sport.name);
 
   return (
     <div>
@@ -37,7 +63,7 @@ const SportDetail: React.FC = () => {
           { label: t.nav.sports, path: `${basePath}/sports` },
           { label: sportDisplayName },
         ]}
-        badge={language === 'en' ? 'Comprehensive Youth Training Program' : 'برنامج تدريبي متكامل لأبنائكم'}
+        badge={language === 'en' ? 'Comprehensive Children Training Program' : 'برنامج تدريبي متكامل لأبنائكم'}
       />
 
       {/* Hero Image */}
@@ -147,7 +173,7 @@ const SportDetail: React.FC = () => {
                   </h3>
                   <p className="text-white/70 text-sm text-center mb-6 font-medium">
                     {language === 'en'
-                      ? 'Join the premier youth sports academy in Jeddah'
+                      ? 'Join the premier children sports academy in Jeddah'
                       : 'انضموا إلى المنظومة الرياضية المتطورة في أكاديمية القمة'}
                   </p>
 

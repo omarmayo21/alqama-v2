@@ -146,14 +146,6 @@ export interface TranslationSchema {
     relatedArticles: string;
     backToBlog: string;
   };
-  faqPage: {
-    badge: string;
-    title: string;
-    subtitle: string;
-    stillQuestionsTitle: string;
-    stillQuestionsDesc: string;
-    askOnWhatsapp: string;
-  };
   common: {
     whatsappTooltip: string;
     languageToggle: string;
@@ -178,10 +170,10 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       contact: 'تواصل معنا',
     },
     hero: {
-      badge: 'أكاديمية القمة الرياضية للأطفال والناشئين • جدة',
-      titleLine1: 'أحدث أكاديمية رياضية',
+      badge: 'اكاديمية القمة الرياضية للأطفال بجدة',
+      titleLine1: 'الأكاديمية الاكثر تطورا',
       titleHighlight: 'في جدة',
-      subtitle: 'طريق طفلك نحو القمة.. بيئة رياضية احترافية وآمنة لبناء شخصية ولياقة ومستقبل أبطال الغد تحت إشراف نخبة من المدربين المعتمدين.',
+      subtitle: 'نمهّد طريق أبنائكم نحو القمة.. صرح رياضي متكامل يهدف إلى اكتشاف المواهب وبناء الأبطال عبر برامج تدريبية احترافية تدعم تطورهم الجسدي والنفسي',
       ctaPrimary: 'تواصل مع فريقنا',
       ctaSecondary: 'استكشف الرياضات',
       stat1Value: '٧+',
@@ -211,29 +203,29 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
           desc: 'باقات وتسهيلات عائلية تشجع جميع أفراد الأسرة على الانضمام وممارسة رياضاتهم المفضلة.',
         },
         {
-          title: 'تقسيط ميسر عبر تابي وتمارا',
-          desc: 'خيارات دفع مرنة وميسرة بدون أي أعباء فورية عبر مزودي خدمات التقسيط المعتمدين.',
+          title: 'تقسيط عبر تابي وتمارا',
+          desc: 'خطط دفع صُممت لتسهيل استثمارك\nفي مواهب أبنائك دون أي ضغوط مالية',
         },
       ],
     },
     sportsSection: {
       badge: 'رياضات متنوعة للأطفال',
-      title: 'برامج تدريبية متخصصة لكل مستوى',
-      subtitle: 'اختر الرياضة الأنسب لميول طفلك وقدراته البدنية وشاهده يتألق خطوة بخطوة في بيئة محفزة.',
+      title: 'برامج رياضية متنوعة تقود طفلك نحو القمة',
+      subtitle: 'بيئة رياضية آمنة ومتخصصة تمنح أبناءكم فرصة استكشاف شغفهم وتطوير قدراتهم البدنية والذهنية بثقة.',
       viewAll: 'عرض جميع الرياضات',
       agePrefix: 'الفئة العمرية:',
       levelLabel: 'المستويات:',
       trainingPrograms: 'برامج تدريبية لكافة المستويات',
-      detailsBtn: 'تفاصيل الرياضة',
+      detailsBtn: 'تفاصيل البرنامج',
     },
     paymentSection: {
-      badge: 'مرونة في الدفع والتقسيط',
-      title: 'سجل أطفالك بسهولة وقسّط مع تابي وتمارا',
-      subtitle: 'نوفر لكم خيارات دفع ميسرة ومرنة لتسهيل انضمام أطفالكم إلى برامج الأكاديمية دون أي عوائق.',
-      tabbyTitle: 'تقسيط مرن عبر تابي (Tabby)',
-      tabbyDesc: 'قسّم رسوم تدريب أطفالك على دفعات شهرية ميسرة وفق سياسات تابي المعتمدة وبكل راحة.',
-      tamaraTitle: 'تقسيط سهل عبر تمارا (Tamara)',
-      tamaraDesc: 'استمتع بخطة دفع مرنة وميسرة لجميع باقات الأكاديمية مع خيارات الدفع عبر تمارا.',
+      badge: 'قسطها مع القمة',
+      title: 'تقسيط عبر تابي وتمارا',
+      subtitle: 'خطط دفع صُممت لتسهيل استثمارك\nفي مواهب أبنائك دون أي ضغوط مالية',
+      tabbyTitle: 'قسط عبر تابي',
+      tabbyDesc: 'قسط مع تابي (Tabby). (قسّم فاتورتك على دفعات شهرية مريحة)',
+      tamaraTitle: 'قسط عبر تمارا',
+      tamaraDesc: 'تقسيط تمارا (Tamara). (خطط دفع مرنة تلبي احتياجاتك وتتناسب مع ميزانيتك بسهولة.)',
       learnMore: 'استفسر عن خطط التقسيط',
     },
     offersSection: {
@@ -259,11 +251,11 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       button: 'تحدث مع فريقنا عبر واتساب',
     },
     footer: {
-      description: 'أكاديمية القمة الرياضية في جدة.. أحدث بيئة رياضية متكاملة لرعاية وبناء وتطوير مهارات الأطفال والناشئين في ٧ رياضات متخصصة.',
+      description: 'أكاديمية القمة الرياضية في جدة.. أحدث بيئة رياضية متكاملة لرعاية وبناء وتطوير مهارات الأطفال في ٧ رياضات متخصصة.',
       quickLinksTitle: 'روابط سريعة',
       sportsTitle: 'رياضاتنا',
       contactTitle: 'تواصل معنا',
-      locationText: 'جدة، المملكة العربية السعودية',
+      locationText: 'حي الزهراء - داخل مدارس دار الحنان - جدة',
       hoursText: 'السبت - الخميس: ٢:٠٠ م - ١٠:٠٠ م',
       allRightsReserved: 'جميع الحقوق محفوظة لأكاديمية القمة الرياضية',
       privacy: 'سياسة الخصوصية',
@@ -272,7 +264,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
     aboutPage: {
       badge: 'عن أكاديمية القمة',
       title: 'نصنع أبطال الغد في بيئة ملهمة وآمنة',
-      subtitle: 'تأسست أكاديمية القمة الرياضية لتكون الوجهة الرياضية والتربوية الرائدة للأطفال والناشئين في جدة، حيث نجمع بين التدريب الاحترافي وبناء الشخصية المتوازنة.',
+      subtitle: 'تأسست أكاديمية القمة الرياضية لتكون الوجهة الرياضية والتربوية الرائدة للأطفال في جدة، حيث نجمع بين التدريب الاحترافي وبناء الشخصية المتوازنة.',
       missionTitle: 'رسالتنا',
       missionDesc: 'تمكين أطفالنا وبناء قدراتهم الحركية والذهنية في بيئة رياضية محفزة وآمنة تعزز قيم الانضباط والعمل الجماعي والثقة بالنفس.',
       visionTitle: 'رؤيتنا',
@@ -293,7 +285,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
     sportsPage: {
       badge: 'الرياضات المتاحة',
       title: 'اكتشف شغف طفلك الرياضي',
-      subtitle: 'نقدم ٧ برامج تدريبية متخصصة للأطفال والناشئين بإشراف مدربين محترفين ومعتمدين.',
+      subtitle: 'نقدم ٧ برامج تدريبية متخصصة للأطفال بإشراف مدربين محترفين ومعتمدين.',
       filterAll: 'جميع الرياضات',
       featuresIncluded: 'ما يتضمنه البرنامج التدريبي:',
       ctaTitle: 'هل تحتاج لمساعدة في اختيار الرياضة المناسبة؟',
@@ -332,14 +324,6 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       relatedArticles: 'مقالات ذات صلة',
       backToBlog: 'العودة إلى المدونة',
     },
-    faqPage: {
-      badge: 'الأسئلة الشائعة',
-      title: 'إجابات على استفسارات أولياء الأمور',
-      subtitle: 'كل ما تحتاج لمعرفته حول التسجيل، البرامج، المرافق، وخيارات التقسيط المتاحة.',
-      stillQuestionsTitle: 'هل لديك سؤال آخر؟',
-      stillQuestionsDesc: 'فريق خدمة العملاء جاهز للرد على جميع استفساراتكم على مدار اليوم.',
-      askOnWhatsapp: 'اسألنا مباشرة عبر واتساب',
-    },
     common: {
       whatsappTooltip: 'تواصل عبر واتساب',
       languageToggle: 'English',
@@ -362,14 +346,14 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       contact: 'Contact Us',
     },
     hero: {
-      badge: 'ALQIMA Sports Academy for Children & Youth • Jeddah',
+      badge: 'ALQIMA Sports Academy for Children in Jeddah',
       titleLine1: 'The Most Advanced Sports Academy',
       titleHighlight: 'in Jeddah',
-      subtitle: 'The path to the top starts here. A safe, inspiring, and professional sports environment nurturing your child’s fitness, character, and future under certified expert coaches.',
+      subtitle: 'Paving your children’s path to the top.. A comprehensive sports academy dedicated to discovering talent and building champions through professional training programs supporting their physical and mental development.',
       ctaPrimary: 'Talk to Our Team',
       ctaSecondary: 'Explore Sports',
       stat1Value: '7+',
-      stat1Label: 'Specialized Youth Sports',
+      stat1Label: 'Specialized Children Sports',
       stat2Value: '100%',
       stat2Label: 'Certified & Licensed Coaches',
       stat3Value: '4.9★',
@@ -395,30 +379,30 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
           desc: 'Exclusive family packages that encourage all siblings to participate and enjoy their favorite sports.',
         },
         {
-          title: 'Installment Options via Tabby & Tamara',
-          desc: 'Flexible payment and installment solutions available through trusted providers with zero immediate pressure.',
+          title: 'Installments via Tabby & Tamara',
+          desc: 'Payment plans designed to make investing in your children’s talent effortless and stress-free',
         },
       ],
     },
     sportsSection: {
-      badge: 'Diverse Youth Sports',
-      title: 'Training Programs for Every Level',
-      subtitle: 'Select the ideal sport matching your child’s passion and physical capabilities, and watch them flourish in an encouraging environment.',
+      badge: 'Diverse Children Sports',
+      title: 'Diverse Sports Programs Leading Your Child to the Top',
+      subtitle: 'A safe, specialized athletic environment giving your children the opportunity to explore their passion and build physical and mental capabilities with confidence.',
       viewAll: 'View All Sports',
       agePrefix: 'Age Range:',
       levelLabel: 'Levels:',
       trainingPrograms: 'Training Programs for Every Level',
-      detailsBtn: 'Sport Details',
+      detailsBtn: 'Program Details',
     },
     paymentSection: {
-      badge: 'Payment & Installments',
-      title: 'Enroll Your Child with Ease & Pay in Installments',
-      subtitle: 'We provide convenient, flexible installment options to make world-class sports training accessible for every family.',
-      tabbyTitle: 'Flexible Installments via Tabby',
-      tabbyDesc: 'Split your training fees into simple monthly installments through Tabby according to provider guidelines.',
-      tamaraTitle: 'Easy Payments via Tamara',
-      tamaraDesc: 'Enjoy convenient installment plans for all academy programs with flexible payment options through Tamara.',
-      learnMore: 'Ask About Installments',
+      badge: 'Installments with ALQIMA',
+      title: 'Installments via Tabby & Tamara',
+      subtitle: 'Payment plans designed to make investing in your children’s talent effortless and stress-free',
+      tabbyTitle: 'Pay with Tabby',
+      tabbyDesc: 'Split your payment into easy monthly installments with Tabby',
+      tamaraTitle: 'Pay with Tamara',
+      tamaraDesc: 'Flexible payment plans tailored to your needs and budget with Tamara',
+      learnMore: 'Inquire About Installments',
     },
     offersSection: {
       badge: 'Tailored Packages',
@@ -443,11 +427,11 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       button: 'Talk to Our Team on WhatsApp',
     },
     footer: {
-      description: 'ALQIMA Sports Academy in Jeddah — the premier sports academy dedicated to nurturing and developing children and youth across 7 specialized sports.',
+      description: 'ALQIMA Sports Academy in Jeddah — the premier sports academy dedicated to nurturing and developing children across 7 specialized sports.',
       quickLinksTitle: 'Quick Links',
       sportsTitle: 'Our Sports',
       contactTitle: 'Contact Us',
-      locationText: 'Jeddah, Kingdom of Saudi Arabia',
+      locationText: 'Al Zahra District – Inside Dar Al-Hanan Schools – Jeddah',
       hoursText: 'Saturday - Thursday: 2:00 PM - 10:00 PM',
       allRightsReserved: 'All Rights Reserved © ALQIMA Sports Academy',
       privacy: 'Privacy Policy',
@@ -460,7 +444,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       missionTitle: 'Our Mission',
       missionDesc: 'Empowering children by building physical agility and mental focus in a safe, motivating environment that champions discipline, teamwork, and confidence.',
       visionTitle: 'Our Vision',
-      visionDesc: 'To be the most advanced and respected youth sports academy in Saudi Arabia, preparing a promising generation to represent the Kingdom locally and globally.',
+      visionDesc: 'To be the most advanced and respected children sports academy in Saudi Arabia, preparing a promising generation to represent the Kingdom locally and globally.',
       valuesTitle: 'Our Core Values',
       valuesSubtitle: 'The foundational pillars that guide our daily coaching and reflect in every child and coach at our academy.',
       valuesList: [
@@ -472,12 +456,12 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       whyChooseTitle: 'What Sets ALQIMA Apart',
       whyChooseSubtitle: 'Uncompromising standards of quality ensuring your child receives the highest standard of athletic and personal development.',
       facilitiesTitle: 'Modern, Fully Equipped Facilities',
-      facilitiesSubtitle: 'Indoor, air-conditioned sports venues built to Olympic and international youth safety specifications.',
+      facilitiesSubtitle: 'Indoor, air-conditioned sports venues built to Olympic and international children safety specifications.',
     },
     sportsPage: {
       badge: 'Available Sports',
       title: 'Discover Your Child’s Passion',
-      subtitle: 'We offer 7 specialized training programs for children and youth, supervised by certified professional coaches.',
+      subtitle: 'We offer 7 specialized training programs for children, supervised by certified professional coaches.',
       filterAll: 'All Sports',
       featuresIncluded: 'Program Highlights & Training Scope:',
       ctaTitle: 'Need Assistance Choosing the Right Sport?',
@@ -509,20 +493,12 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
     blogPage: {
       badge: 'Academy Blog',
       title: 'Sports Articles & Guidance for Parents',
-      subtitle: 'Your comprehensive resource for youth fitness, sports nutrition, and child athletic development from our expert coaches.',
+      subtitle: 'Your comprehensive resource for children fitness, sports nutrition, and child athletic development from our expert coaches.',
       readMore: 'Read Article',
       readTimePrefix: 'Read time:',
       shareArticle: 'Share Article',
       relatedArticles: 'Related Articles',
       backToBlog: 'Back to Blog',
-    },
-    faqPage: {
-      badge: 'Frequently Asked Questions',
-      title: 'Answers for Parents & Guardians',
-      subtitle: 'Everything you need to know about joining, training programs, facilities, and installment options.',
-      stillQuestionsTitle: 'Still Have Questions?',
-      stillQuestionsDesc: 'Our friendly customer care team is available to assist you throughout the day.',
-      askOnWhatsapp: 'Ask Us Directly on WhatsApp',
     },
     common: {
       whatsappTooltip: 'Chat on WhatsApp',

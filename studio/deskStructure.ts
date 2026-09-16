@@ -15,6 +15,10 @@ export const deskStructure: StructureResolver = (S) =>
                 .title('🏠 Homepage / الصفحة الرئيسية')
                 .child(S.document().schemaType('homepage').documentId('homepage-main')),
               S.listItem()
+                .title('🎬 Hero Slides / شرائح واجهة البداية')
+                .schemaType('heroSlide')
+                .child(S.documentTypeList('heroSlide').title('Hero Slides / شرائح البداية')),
+              S.listItem()
                 .title('ℹ️ About Page / صفحة من نحن')
                 .child(S.document().schemaType('aboutPage').documentId('about-page-main')),
               S.divider(),
@@ -59,7 +63,7 @@ export const deskStructure: StructureResolver = (S) =>
             .items([
               S.listItem()
                 .title('🏢 Site Settings / إعدادات الموقع والشعار')
-                .child(S.document().schemaType('siteSettings').documentId('site-settings')),
+                .child(S.document().schemaType('siteSettings').documentId('siteSettings-main')),
               S.listItem()
                 .title('🔤 Global UI Labels & Buttons / نصوص الأزرار والواجهة العامة')
                 .child(S.document().schemaType('uiLabels').documentId('ui-labels-main')),

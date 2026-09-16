@@ -96,8 +96,8 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-4 text-white/80">
               <span className="tabular-nums">
                 {language === 'en'
-                  ? 'Sat - Thu: 2:00 PM - 10:00 PM'
-                  : 'السبت - الخميس: ٢:٠٠ م - ١٠:٠٠ م'}
+                  ? 'Sat - Thu: 5:00 PM - 8:00 PM'
+                  : 'السبت - الخميس: ٥:٠٠ م - ٨:٠٠ م'}
               </span>
               <span className="text-[#FFC400]">|</span>
               <a

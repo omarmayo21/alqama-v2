@@ -51,8 +51,8 @@ async function syncAllContent() {
     googleMapsUrl: 'https://maps.google.com',
     workingHours: {
       _type: 'localizedString',
-      ar: 'السبت - الخميس: ٢:٠٠ م - ١٠:٠٠ م',
-      en: 'Saturday - Thursday: 2:00 PM - 10:00 PM',
+      ar: 'السبت - الخميس: ٥:٠٠ م - ٨:٠٠ م',
+      en: 'Saturday - Thursday: 5:00 PM - 8:00 PM',
     },
     socialLinks: [
       { _key: 's1', platform: 'instagram', url: 'https://instagram.com/alqimasports' },

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowLeft,
@@ -29,7 +29,7 @@ import { translations } from '../data/translations';
 
 const Home: React.FC = () => {
   const { language, isRTL } = useLanguage();
-  const { homepage, sports: sanitySports, testimonials: sanityTestimonials, blogPosts: sanityBlogPosts, t: cmsT } = useSanityData();
+  const { homepage, sports: sanitySports, testimonials: sanityTestimonials, blogPosts: sanityBlogPosts, heroSlides: sanityHeroSlides, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentSports = language === 'en' ? sportsEn : sports;
@@ -145,90 +145,356 @@ const Home: React.FC = () => {
     ];
   }, [homepage?.featuresList, t.features.items, cmsT]);
 
-  // Hero Copy Resolution
-  const heroBadge = cmsT(homepage?.heroBadge, t.hero.badge);
-  const heroHeadline = cmsT(homepage?.heroHeadline || homepage?.heroTitle, `${t.hero.titleLine1} ${t.hero.titleHighlight}`);
-  const heroSubtitle = cmsT(homepage?.heroSubtitle || homepage?.heroDescription, t.hero.subtitle);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Slide 1 Data (Original Hero - Preserved Exactly)
+  const slide1 = useMemo(() => {
+    const s = sanityHeroSlides && sanityHeroSlides.length > 0 ? sanityHeroSlides[0] : null;
+
+    const rawTitle = s
+      ? (typeof s.title === 'object'
+          ? (language === 'en' ? (s.title?.en || s.title?.ar) : (s.title?.ar || s.title?.en))
+          : (language === 'en' ? (s.titleEn || s.titleAr || s.title) : (s.titleAr || s.titleEn || s.title)))
+      : (language === 'en' ? 'The Most Advanced Sports Academy in Jeddah' : 'الأكاديمية الاكثر تطورا في جدة');
+
+    const rawBadge = s
+      ? (typeof s.badge === 'object'
+          ? (language === 'en' ? (s.badge?.en || s.badge?.ar) : (s.badge?.ar || s.badge?.en))
+          : (language === 'en' ? (s.badgeEn || s.badgeAr || s.badge) : (s.badgeAr || s.badgeEn || s.badge)))
+      : (language === 'en' ? 'ALQIMA Sports Academy for Children in Jeddah' : 'اكاديمية القمة الرياضية للأطفال بجدة');
+
+    const rawDesc = s
+      ? (typeof s.description === 'object'
+          ? (language === 'en' ? (s.description?.en || s.description?.ar) : (s.description?.ar || s.description?.en))
+          : (language === 'en' ? (s.descriptionEn || s.descriptionAr || s.description) : (s.descriptionAr || s.descriptionEn || s.description)))
+      : (language === 'en' 
+          ? 'Paving your children’s path to the top.. A comprehensive sports academy dedicated to discovering talent and building champions through professional training programs supporting their physical and mental development.' 
+          : 'نمهّد طريق أبنائكم نحو القمة.. صرح رياضي متكامل يهدف إلى اكتشاف المواهب وبناء الأبطال عبر برامج تدريبية احترافية تدعم تطورهم الجسدي والنفسي');
+
+    const rawPrimaryCta = s
+      ? (typeof s.primaryCtaText === 'object'
+          ? (language === 'en' ? (s.primaryCtaText?.en || s.primaryCtaText?.ar) : (s.primaryCtaText?.ar || s.primaryCtaText?.en))
+          : (language === 'en' ? (s.primaryCtaTextEn || s.primaryCtaTextAr || s.primaryCtaText) : (s.primaryCtaTextAr || s.primaryCtaTextEn || s.primaryCtaText)))
+      : (language === 'en' ? "Start Your Child's Journey Today" : 'ابدأ رحلة أبنائك اليوم');
+
+    const rawSecondaryCta = s
+      ? (typeof s.secondaryCtaText === 'object'
+          ? (language === 'en' ? (s.secondaryCtaText?.en || s.secondaryCtaText?.ar) : (s.secondaryCtaText?.ar || s.secondaryCtaText?.en))
+          : (language === 'en' ? (s.secondaryCtaTextEn || s.secondaryCtaTextAr || s.secondaryCtaText) : (s.secondaryCtaTextAr || s.secondaryCtaTextEn || s.secondaryCtaText)))
+      : (language === 'en' ? 'Explore Offers' : 'استكشف العروض');
+
+    const rawReassurance = s
+      ? (typeof s.reassuranceText === 'object'
+          ? (language === 'en' ? (s.reassuranceText?.en || s.reassuranceText?.ar) : (s.reassuranceText?.ar || s.reassuranceText?.en))
+          : (language === 'en' ? (s.reassuranceTextEn || s.reassuranceTextAr || s.reassuranceText) : (s.reassuranceTextAr || s.reassuranceTextEn || s.reassuranceText)))
+      : (language === 'en' ? 'Certified Coaching Staff' : 'مدربون معتمدون ومتخصصون');
+
+    return {
+      id: s?._id || 'heroSlide-1',
+      image: s?.imageUrl || homepage?.heroImageUrl || '/images/hero-bg.jpg',
+      title: rawTitle || (language === 'en' ? 'The Most Advanced Sports Academy in Jeddah' : 'الأكاديمية الاكثر تطورا في جدة'),
+      badge: rawBadge || (language === 'en' ? 'ALQIMA Sports Academy for Children in Jeddah' : 'اكاديمية القمة الرياضية للأطفال بجدة'),
+      description: rawDesc || '',
+      primaryCtaText: rawPrimaryCta || (language === 'en' ? "Start Your Child's Journey Today" : 'ابدأ رحلة أبنائك اليوم'),
+      primaryCtaLink: s?.primaryCtaLink || WHATSAPP_URL,
+      secondaryCtaText: rawSecondaryCta || (language === 'en' ? 'Explore Offers' : 'استكشف العروض'),
+      secondaryCtaLink: s?.secondaryCtaLink ? `${basePath}${s.secondaryCtaLink.startsWith('/') ? s.secondaryCtaLink : `/${s.secondaryCtaLink}`}` : `${basePath}/offers`,
+      reassuranceText: rawReassurance || (language === 'en' ? 'Certified Coaching Staff' : 'مدربون معتمدون ومتخصصون'),
+    };
+  }, [sanityHeroSlides, homepage?.heroImageUrl, language, basePath]);
+
+  // Slide 2 Data (Clean duplicate of Slide 1 structure, using slide 2 image)
+  const slide2 = useMemo(() => {
+    const s = sanityHeroSlides && sanityHeroSlides.length > 1 ? sanityHeroSlides[1] : null;
+
+    const rawTitle = s
+      ? (typeof s.title === 'object'
+          ? (language === 'en' ? (s.title?.en || s.title?.ar) : (s.title?.ar || s.title?.en))
+          : (language === 'en' ? (s.titleEn || s.titleAr || s.title) : (s.titleAr || s.titleEn || s.title)))
+      : slide1.title;
+
+    const rawBadge = s
+      ? (typeof s.badge === 'object'
+          ? (language === 'en' ? (s.badge?.en || s.badge?.ar) : (s.badge?.ar || s.badge?.en))
+          : (language === 'en' ? (s.badgeEn || s.badgeAr || s.badge) : (s.badgeAr || s.badgeEn || s.badge)))
+      : slide1.badge;
+
+    const rawDesc = s
+      ? (typeof s.description === 'object'
+          ? (language === 'en' ? (s.description?.en || '') : (s.description?.ar || ''))
+          : (language === 'en' ? (s.descriptionEn || '') : (s.descriptionAr || '')))
+      : '';
+
+    const rawPrimaryCta = s
+      ? (typeof s.primaryCtaText === 'object'
+          ? (language === 'en' ? (s.primaryCtaText?.en || s.primaryCtaText?.ar) : (s.primaryCtaText?.ar || s.primaryCtaText?.en))
+          : (language === 'en' ? (s.primaryCtaTextEn || s.primaryCtaTextAr || s.primaryCtaText) : (s.primaryCtaTextAr || s.primaryCtaTextEn || s.primaryCtaText)))
+      : slide1.primaryCtaText;
+
+    const rawSecondaryCta = s
+      ? (typeof s.secondaryCtaText === 'object'
+          ? (language === 'en' ? (s.secondaryCtaText?.en || s.secondaryCtaText?.ar) : (s.secondaryCtaText?.ar || s.secondaryCtaText?.en))
+          : (language === 'en' ? (s.secondaryCtaTextEn || s.secondaryCtaTextAr || s.secondaryCtaText) : (s.secondaryCtaTextAr || s.secondaryCtaTextEn || s.secondaryCtaText)))
+      : slide1.secondaryCtaText;
+
+    const rawReassurance = s
+      ? (typeof s.reassuranceText === 'object'
+          ? (language === 'en' ? (s.reassuranceText?.en || s.reassuranceText?.ar) : (s.reassuranceText?.ar || s.reassuranceText?.en))
+          : (language === 'en' ? (s.reassuranceTextEn || s.reassuranceTextAr || s.reassuranceText) : (s.reassuranceTextAr || s.reassuranceTextEn || s.reassuranceText)))
+      : slide1.reassuranceText;
+
+    return {
+      id: s?._id || 'heroSlide-2',
+      image: s?.imageUrl || '/images/national-day-96.png',
+      title: rawTitle || slide1.title,
+      badge: rawBadge || slide1.badge,
+      description: rawDesc || '',
+      primaryCtaText: rawPrimaryCta || slide1.primaryCtaText,
+      primaryCtaLink: s?.primaryCtaLink || slide1.primaryCtaLink,
+      secondaryCtaText: rawSecondaryCta || slide1.secondaryCtaText,
+      secondaryCtaLink: s?.secondaryCtaLink ? `${basePath}${s.secondaryCtaLink.startsWith('/') ? s.secondaryCtaLink : `/${s.secondaryCtaLink}`}` : slide1.secondaryCtaLink,
+      reassuranceText: rawReassurance || slide1.reassuranceText,
+    };
+  }, [sanityHeroSlides, language, basePath, slide1]);
+
+  // Autoplay (5.5s interval, paused on hover)
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+    }, 5500);
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+  }, []);
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+
+  // Touch / Swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      if (isRTL) prevSlide();
+      else nextSlide();
+    } else if (isRightSwipe) {
+      if (isRTL) nextSlide();
+      else prevSlide();
+    }
+  };
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#18213F]">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src={homepage?.heroImageUrl || "/images/hero-bg.jpg"}
-            alt={language === 'en' ? 'ALQIMA Sports Academy Jeddah' : 'أكاديمية القمة الرياضية بجدة'}
-            className="w-full h-full object-cover object-center animate-hero-bg"
-            loading="eager"
-          />
-          <div className="hero-overlay absolute inset-0" />
-        </div>
+      {/* Hero Slider Section */}
+      <section 
+        className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#18213F]"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        aria-label="Hero Slider"
+      >
+        {/* SLIDE 1: Original Hero Design (Preserved 100%) */}
+        <div 
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src={slide1.image}
+              alt={slide1.title}
+              className="w-full h-full object-cover object-center animate-hero-bg"
+              loading="eager"
+            />
+            <div className="hero-overlay absolute inset-0" />
+          </div>
 
-        {/* Decorative subtle ambient circles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
-          <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
-          <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#D90429]/20" />
-        </div>
+          {/* Decorative subtle ambient circles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+            <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
+            <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
+            <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#D90429]/20" />
+          </div>
 
-        {/* Content */}
-        <div className="container mx-auto px-4 md:px-8 relative z-10 py-20">
-          <div className="max-w-3xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-[#D90429]/25 backdrop-blur-md border border-[#D90429]/40 text-white px-4 py-1.5 rounded-full mb-8 animate-fade-up delay-75">
-              <span className="w-2 h-2 rounded-full bg-[#FFC400]" />
-              <span className="text-sm font-bold">{heroBadge}</span>
-            </div>
+          {/* Slide 1 Content */}
+          <div className="container mx-auto px-4 md:px-8 relative z-10 py-20 min-h-[90vh] flex items-center">
+            <div className="max-w-3xl animate-fade-up">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#D90429]/25 backdrop-blur-md border border-[#D90429]/40 text-white px-4 py-1.5 rounded-full mb-8">
+                <span className="w-2 h-2 rounded-full bg-[#FFC400]" />
+                <span className="text-sm font-bold">{slide1.badge}</span>
+              </div>
 
-            {/* Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight animate-fade-up delay-150">
-              {heroHeadline}
-            </h1>
+              {/* Title */}
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight whitespace-pre-line">
+                {slide1.title}
+              </h1>
 
-            {/* Subtitle */}
-            <p className="text-white/90 text-lg sm:text-xl md:text-2xl leading-relaxed mb-10 max-w-2xl font-normal animate-fade-up delay-250">
-              {heroSubtitle}
-            </p>
+              {/* Subtitle / Description */}
+              <p className="text-white/90 text-lg sm:text-xl md:text-2xl leading-relaxed mb-10 max-w-2xl font-normal">
+                {slide1.description}
+              </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 animate-fade-up delay-300">
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-[#D90429] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#B0021F] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-              >
-                <MessageCircle size={22} />
-                <span>{cmsT(homepage?.heroPrimaryCta || homepage?.heroPrimaryCtaText, language === 'en' ? "Start Your Child's Journey Today" : 'ابدأ رحلة أبنائك اليوم')}</span>
-              </a>
-              <Link
-                to={`${basePath}/offers`}
-                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-              >
-                <span>{cmsT(homepage?.heroSecondaryCta || homepage?.heroSecondaryCtaText, language === 'en' ? 'Explore Offers' : 'استكشف العروض')}</span>
-                <ArrowIcon size={20} />
-              </Link>
-            </div>
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-4">
+                <a
+                  href={slide1.primaryCtaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 bg-[#D90429] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#B0021F] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                >
+                  <MessageCircle size={22} />
+                  <span>{slide1.primaryCtaText}</span>
+                </a>
+                <Link
+                  to={slide1.secondaryCtaLink}
+                  className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                >
+                  <span>{slide1.secondaryCtaText}</span>
+                  <ArrowIcon size={20} />
+                </Link>
+              </div>
 
-            {/* Reassurance badge for parents */}
-            <div className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-white/10 text-white/80 text-sm font-semibold animate-fade-up delay-400">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-[#FFC400]" />
-                <span>{language === 'en' ? 'Certified Coaching Staff' : 'مدربون معتمدون ومتخصصون'}</span>
+              {/* Reassurance badge */}
+              <div className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-white/10 text-white/80 text-sm font-semibold">
+                <div className="flex items-center gap-2">
+                  <CheckCircle size={16} className="text-[#FFC400]" />
+                  <span>{slide1.reassuranceText}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 pointer-events-none">
-          <span className="text-xs font-semibold">
-            {language === 'en' ? 'Scroll Down' : 'اسحب للأسفل'}
-          </span>
-          <div className="w-5 h-8 rounded-full border-2 border-white/30 flex items-start justify-center p-1">
-            <div className="w-1.5 h-2.5 rounded-full bg-white/70 animate-scroll-dot" />
+        {/* SLIDE 2: Clean Hero with Slide 2 Image, No Dark Overlay, Green CTAs, and Right-Aligned Content */}
+        <div 
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            currentSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {/* Background Image: Original colors and brightness (NO dark overlay), mobile object-position: 84% center */}
+          <div className="absolute inset-0">
+            <img
+              src={slide2.image}
+              alt={slide2.title}
+              className="w-full h-full object-cover object-[84%_center] sm:object-[42%_center] md:object-[38%_center] animate-hero-bg"
+              loading="lazy"
+            />
           </div>
+
+          {/* Decorative subtle ambient circles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+            <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
+            <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
+            <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#006C35]/20" />
+          </div>
+
+          {/* Slide 2 Content (Right-aligned, moved down on mobile, no badge) */}
+          <div className="container mx-auto px-4 md:px-8 relative z-10 py-12 sm:py-16 md:py-20 min-h-[90vh] flex items-center">
+            <div className={`max-w-3xl w-full animate-fade-up relative top-[50px] sm:top-0 pt-8 sm:pt-14 md:pt-20 text-right ${isRTL ? 'md:-mr-6 lg:-mr-15' : 'md:-ml-6 lg:-ml-55'}`}>
+              {/* Title: Centered with line-height: 2 on mobile only */}
+              <h1 className="text-center sm:text-right text-[26px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[2] sm:leading-tight mb-4 sm:mb-6 tracking-tight whitespace-pre-line">
+                {slide2.title}
+              </h1>
+
+              {/* Subtitle / Description: Clean responsive sizing and spacing */}
+              {slide2.description ? (
+                <p className="text-white/90 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed mb-6 sm:mb-8 md:mb-10 max-w-2xl font-normal">
+                  {slide2.description}
+                </p>
+              ) : null}
+
+              {/* CTA Buttons: Both Saudi Green, positioned on the right underneath the text */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-2 sm:mt-4">
+                <a
+                  href={slide2.primaryCtaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2.5 bg-[#006C35] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-[#005429] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-emerald-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
+                >
+                  <MessageCircle size={20} className="sm:w-[22px] sm:h-[22px]" />
+                  <span>{slide2.primaryCtaText}</span>
+                </a>
+                <Link
+                  to={slide2.secondaryCtaLink}
+                  className="inline-flex items-center justify-center gap-2 bg-[#006C35]/25 backdrop-blur-md text-white border-2 border-[#006C35] hover:bg-[#006C35]/40 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:border-[#00843D] transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
+                >
+                  <span>{slide2.secondaryCtaText}</span>
+                  <ArrowIcon size={18} className="sm:w-5 sm:h-5" />
+                </Link>
+              </div>
+
+              {/* Reassurance badge */}
+              <div className="flex flex-wrap items-center gap-6 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10 text-white/80 text-xs sm:text-sm font-semibold">
+                <div className="flex items-center gap-2">
+                  <CheckCircle size={16} className="text-[#00E676]" />
+                  <span>{slide2.reassuranceText}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Arrows */}
+        <button
+          type="button"
+          onClick={isRTL ? nextSlide : prevSlide}
+          aria-label={isRTL ? (language === 'en' ? 'Next Slide' : 'الشريحة التالية') : (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة')}
+          className="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 sm:left-6 md:left-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
+        >
+          <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+        </button>
+
+        <button
+          type="button"
+          onClick={isRTL ? prevSlide : nextSlide}
+          aria-label={isRTL ? (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة') : (language === 'en' ? 'Next Slide' : 'الشريحة التالية')}
+          className="hidden sm:flex absolute top-1/2 -translate-y-1/2 right-3 sm:right-6 md:right-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
+        >
+          <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+        </button>
+
+        {/* Pagination Dots */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-[#18213F]/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+          {[0, 1].map((idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => goToSlide(idx)}
+              aria-label={language === 'en' ? `Go to slide ${idx + 1}` : `الانتقال إلى الشريحة ${idx + 1}`}
+              className={`transition-all duration-500 rounded-full ${
+                idx === currentSlide
+                  ? 'w-8 h-2.5 bg-[#D90429]'
+                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/75'
+              }`}
+            />
+          ))}
         </div>
       </section>
 

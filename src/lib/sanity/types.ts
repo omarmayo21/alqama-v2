@@ -70,6 +70,9 @@ export interface SanitySiteSettings {
   workingHours?: SanityLocalized;
   workingHoursAr?: string;
   workingHoursEn?: string;
+  dailyScheduleTitle?: SanityLocalized;
+  dailyScheduleDays?: SanityLocalized;
+  dailyScheduleHours?: SanityLocalized;
   socialLinks?: Array<{
     _key?: string;
     platform: string;
@@ -316,12 +319,14 @@ export interface SanityOffer {
   description?: SanityLocalized;
   descriptionAr?: string;
   descriptionEn?: string;
-  price?: number | string;
+  price?: SanityLocalized | number | string;
   originalPrice?: number | string;
   currencyAr?: string;
   currencyEn?: string;
   durationAr?: string;
   durationEn?: string;
+  sessionsCount?: SanityLocalized | string;
+  sportsIncluded?: SanityLocalized | string;
   sessionsCountAr?: string;
   sessionsCountEn?: string;
   features?: Array<SanityLocalized | string | { _key?: string; ar?: string; en?: string }>;
@@ -425,6 +430,35 @@ export interface SanityGalleryImage {
   categoryTitle?: SanityLocalized;
   displayOrder?: number;
   isFeatured?: boolean;
+  isActive?: boolean;
+}
+
+export interface SanityHeroSlide {
+  _id: string;
+  _type: 'heroSlide';
+  title?: SanityLocalized;
+  titleAr?: string;
+  titleEn?: string;
+  badge?: SanityLocalized;
+  badgeAr?: string;
+  badgeEn?: string;
+  description?: SanityLocalized;
+  descriptionAr?: string;
+  descriptionEn?: string;
+  primaryCtaText?: SanityLocalized;
+  primaryCtaTextAr?: string;
+  primaryCtaTextEn?: string;
+  primaryCtaLink?: string;
+  secondaryCtaText?: SanityLocalized;
+  secondaryCtaTextAr?: string;
+  secondaryCtaTextEn?: string;
+  secondaryCtaLink?: string;
+  reassuranceText?: SanityLocalized;
+  reassuranceTextAr?: string;
+  reassuranceTextEn?: string;
+  image?: SanityImage;
+  imageUrl?: string;
+  displayOrder?: number;
   isActive?: boolean;
 }
 

@@ -15,8 +15,11 @@ export interface Sport {
 export interface Offer {
   id: string;
   title: string;
+  price?: string;
+  sessionsCount?: string;
+  sportsIncluded?: string;
   badge?: string;
-  tagline: string;
+  tagline?: string;
   description: string;
   features: string[];
   highlight?: string;

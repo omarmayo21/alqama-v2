@@ -136,6 +136,10 @@ export interface TranslationSchema {
     whatsappCta: string;
     familyBenefitsTitle: string;
     installmentsNote: string;
+    scheduleBadge: string;
+    scheduleTitle: string;
+    scheduleDays: string;
+    scheduleHours: string;
   };
   blogPage: {
     badge: string;
@@ -274,7 +278,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       sportsTitle: 'رياضاتنا',
       contactTitle: 'تواصل معنا',
       locationText: 'حي الزهراء - داخل مدارس دار الحنان - جدة',
-      hoursText: 'السبت - الخميس: ٢:٠٠ م - ١٠:٠٠ م',
+      hoursText: 'السبت - الخميس: ٥:٠٠ م - ٨:٠٠ م',
       allRightsReserved: 'جميع الحقوق محفوظة لأكاديمية القمة الرياضية',
       privacy: 'سياسة الخصوصية',
       terms: 'الشروط والأحكام',
@@ -323,14 +327,18 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       whatsappInquiry: 'استفسر عن هذه الرياضة عبر واتساب',
     },
     offersPage: {
-      badge: 'العروض والباقات',
-      title: 'باقات تدريبية مرنة لأطفالكم',
-      subtitle: 'اختر الباقة المناسبة لطفلك واستفد من عروضنا العائلية وتسهيلات التقسيط مع تابي وتمارا.',
+      badge: 'عروض اليوم الوطني 96',
+      title: 'عروض اليوم الوطني 96',
+      subtitle: 'احتفلوا باليوم الوطني 96 مع باقات رياضية استثنائية لأبنائكم في أكاديمية القمة بجدة',
       customInquiryTitle: 'هل تبحث عن باقة مخصصة لعائلتك؟',
       customInquiryDesc: 'يسعدنا دائماً تقديم عروض وباقات خاصة بالعائلات والأخوة لتناسب احتياجاتكم.',
-      whatsappCta: 'استفسر عن العروض عبر واتساب',
+      whatsappCta: 'احجز العرض عبر واتساب',
       familyBenefitsTitle: 'مزايا وتسهيلات حصرية للعائلات',
       installmentsNote: 'جميع الباقات متاحة بخيارات تقسيط ميسرة عبر تابي وتمارا.',
+      scheduleBadge: 'أوقات التدريب اليومية',
+      scheduleTitle: 'المواعيد اليومية',
+      scheduleDays: 'من السبت إلى الخميس',
+      scheduleHours: 'من 5 إلى 8م',
     },
     blogPage: {
       badge: 'مدونة الأكاديمية',
@@ -516,14 +524,18 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       whatsappInquiry: 'Inquire About This Sport on WhatsApp',
     },
     offersPage: {
-      badge: 'Offers & Packages',
-      title: 'Flexible Training Offers for Your Children',
-      subtitle: 'Select the ideal package for your child and take advantage of our family discounts and installment options via Tabby & Tamara.',
+      badge: 'Saudi National Day 96 Offers',
+      title: 'Saudi National Day 96 Offers',
+      subtitle: 'Celebrate Saudi National Day 96 with exclusive sports packages for your champions at ALQIMA Academy in Jeddah',
       customInquiryTitle: 'Looking for a Custom Family Package?',
       customInquiryDesc: 'We are delighted to provide customized offers and packages for families with multiple children.',
-      whatsappCta: 'Ask About Our Offers on WhatsApp',
+      whatsappCta: 'Claim Offer via WhatsApp',
       familyBenefitsTitle: 'Exclusive Family Benefits & Privileges',
       installmentsNote: 'All offers are eligible for flexible installment payment options through Tabby and Tamara.',
+      scheduleBadge: 'Daily Training Times',
+      scheduleTitle: 'Daily Schedule',
+      scheduleDays: 'Saturday to Thursday',
+      scheduleHours: '5:00 PM – 8:00 PM',
     },
     blogPage: {
       badge: 'ALQIMA Blog',

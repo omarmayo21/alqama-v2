@@ -10,6 +10,7 @@ import {
   getBlogPosts,
   getTestimonials,
   getGalleryImages,
+  getHeroSlides,
   getNavigation,
   getFooter,
   getAnalyticsSettings,
@@ -25,6 +26,7 @@ import type {
   SanityBlogPost,
   SanityTestimonial,
   SanityGalleryImage,
+  SanityHeroSlide,
   SanityNavigation,
   SanityFooter,
   SanityAnalyticsSettings,
@@ -43,6 +45,7 @@ interface SanityDataContextType {
   blogPosts: SanityBlogPost[];
   testimonials: SanityTestimonial[];
   galleryImages: SanityGalleryImage[];
+  heroSlides: SanityHeroSlide[];
   navigation: SanityNavigation | null;
   footer: SanityFooter | null;
   analyticsSettings: SanityAnalyticsSettings | null;
@@ -72,6 +75,7 @@ export const SanityDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [blogPosts, setBlogPosts] = useState<SanityBlogPost[]>([]);
   const [testimonials, setTestimonials] = useState<SanityTestimonial[]>([]);
   const [galleryImages, setGalleryImages] = useState<SanityGalleryImage[]>([]);
+  const [heroSlides, setHeroSlides] = useState<SanityHeroSlide[]>([]);
   const [navigation, setNavigation] = useState<SanityNavigation | null>(null);
   const [footer, setFooter] = useState<SanityFooter | null>(null);
   const [analyticsSettings, setAnalyticsSettings] = useState<SanityAnalyticsSettings | null>(null);
@@ -95,6 +99,7 @@ export const SanityDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           blogsData,
           reviewsData,
           galleryData,
+          heroSlidesData,
           nav,
           foot,
           analytics,
@@ -109,6 +114,7 @@ export const SanityDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           getBlogPosts(),
           getTestimonials(),
           getGalleryImages(),
+          getHeroSlides(),
           getNavigation(),
           getFooter(),
           getAnalyticsSettings(),
@@ -125,6 +131,7 @@ export const SanityDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           setBlogPosts(blogsData || []);
           setTestimonials(reviewsData || []);
           setGalleryImages(galleryData || []);
+          setHeroSlides(heroSlidesData || []);
           setNavigation(nav);
           setFooter(foot);
           setAnalyticsSettings(analytics);
@@ -211,6 +218,7 @@ export const SanityDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         blogPosts,
         testimonials,
         galleryImages,
+        heroSlides,
         navigation,
         footer,
         analyticsSettings,

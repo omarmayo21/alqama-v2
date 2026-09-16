@@ -21,8 +21,24 @@ export const offer = defineType({
       },
     }),
     defineField({
+      name: 'price',
+      title: 'Price / السعر (مثال: 296 ريال / SAR 296)',
+      type: 'localizedString',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'sessionsCount',
+      title: 'Sessions Count / عدد الحصص (مثال: 8 حصص / 8 Sessions)',
+      type: 'localizedString',
+    }),
+    defineField({
+      name: 'sportsIncluded',
+      title: 'Sports Included / الرياضات المشمولة (مثال: كرة القدم - كاراتيه... / في أي رياضة)',
+      type: 'localizedString',
+    }),
+    defineField({
       name: 'badge',
-      title: 'Badge Label / شارة العرض (مثال: الأكثر طلباً)',
+      title: 'Badge Label / شارة العرض (مثال: الأكثر طلباً / عرض 96)',
       type: 'localizedString',
     }),
     defineField({
@@ -34,14 +50,12 @@ export const offer = defineType({
       name: 'description',
       title: 'Description / الوصف التوضيحي للباقة',
       type: 'localizedText',
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'features',
-      title: 'Included Benefits & Features / مزايا وبنود الباقة',
+      title: 'Included Benefits & Features / مزايا وبنود إضافية',
       type: 'array',
       of: [{ type: 'localizedString' }],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'isPopular',

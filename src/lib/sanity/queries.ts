@@ -98,6 +98,13 @@ export const GALLERY_QUERY = `
   }
 `;
 
+export const HERO_SLIDES_QUERY = `
+  *[_type == "heroSlide" && isActive != false] | order(displayOrder asc, _createdAt asc){
+    ...,
+    "imageUrl": image.asset->url
+  }
+`;
+
 export const NAVIGATION_QUERY = `
   *[_type == "navigation"][0]{
     ...

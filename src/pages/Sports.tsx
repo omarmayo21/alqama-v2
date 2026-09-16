@@ -139,8 +139,8 @@ const Sports: React.FC = () => {
                     <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent ${isRTL ? 'md:bg-gradient-to-l md:from-transparent md:to-black/40' : 'md:bg-gradient-to-r md:from-transparent md:to-black/40'}`} />
                     
                     {/* Icon Badge */}
-                    <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} w-11 h-11 rounded-xl bg-[#18213F]/80 backdrop-blur-md text-white flex items-center justify-center border border-white/10 shadow-sm`}>
-                      <SportIcon sportId={sport.id} size={22} className="text-white" />
+                    <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} w-11 h-11 rounded-xl bg-white/95 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-sm`}>
+                      <SportIcon sportId={sport.id} size={24} />
                     </div>
                   </div>
 
@@ -157,11 +157,8 @@ const Sports: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex flex-col items-end gap-1.5 tabular-nums">
-                          <span className="bg-red-50 text-[#D90429] text-xs font-bold px-3 py-1 rounded-full border border-red-100">
-                            {t.sportsSection.agePrefix} {sport.ageRange}
-                          </span>
-                          <span className="bg-gray-100 text-[#18213F] text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                            <Layers size={12} className="text-[#D90429]" />
+                          <span className="bg-gray-100 text-[#18213F] text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                            <Layers size={13} className="text-[#D90429]" />
                             <span>{t.sportsSection.trainingPrograms}</span>
                           </span>
                         </div>

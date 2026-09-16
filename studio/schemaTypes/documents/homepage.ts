@@ -147,6 +147,13 @@ export const homepage = defineType({
       group: 'whyUs',
     }),
     defineField({
+      name: 'whyUsImage',
+      title: 'Why Us Image / صورة قسم لماذا يختارنا أولياء الأمور',
+      type: 'localizedImage',
+      group: 'whyUs',
+      description: 'الصورة الرئيسية المعروضة في قسم لماذا يختارنا أولياء الأمور (الافتراضية: /images/about-team.jpg)',
+    }),
+    defineField({
       name: 'whyUsCards',
       title: 'Why Us Cards / بطاقات المزايا',
       type: 'array',

@@ -548,15 +548,8 @@ const Home: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                       
                       {/* Icon Badge */}
-                      <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} w-10 h-10 rounded-xl bg-[#18213F]/85 backdrop-blur-md text-white flex items-center justify-center border border-white/15 shadow-sm`}>
-                        <SportIcon sportId={sport.id} size={20} className="text-white" />
-                      </div>
-                      
-                      {/* Age badge */}
-                      <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'}`}>
-                        <span className="bg-[#D90429] text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                          {sport.ageRange}
-                        </span>
+                      <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} w-10 h-10 rounded-xl bg-white/95 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-sm`}>
+                        <SportIcon sportId={sport.id} size={22} />
                       </div>
                     </div>
 

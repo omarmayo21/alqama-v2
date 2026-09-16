@@ -77,14 +77,11 @@ const SportDetail: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
         <div className={`absolute bottom-6 ${isRTL ? 'right-8' : 'left-8'} flex items-center gap-4`}>
           <div className="bg-white rounded-2xl px-6 py-3.5 shadow-xl flex items-center gap-3 border border-gray-100 animate-fade-up">
-            <div className="w-10 h-10 rounded-xl bg-[#18213F] text-white flex items-center justify-center">
-              <SportIcon sportId={sport.id} size={22} className="text-[#FFC400]" />
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-gray-100 shadow-xs">
+              <SportIcon sportId={sport.id} size={24} />
             </div>
             <div>
               <div className="font-black text-[#18213F] text-lg leading-tight">{sportDisplayName}</div>
-              <div className="text-[#5A6E85] text-xs font-bold tabular-nums">
-                {t.sportDetailPage.ageLabel}: {sport.ageRange}
-              </div>
             </div>
           </div>
         </div>
@@ -165,8 +162,8 @@ const SportDetail: React.FC = () => {
               {/* Inquiry Card */}
               <ScrollReveal delay={100} direction="scale">
                 <div className="bg-[#18213F] rounded-3xl p-7 text-white mb-6 sticky top-24 shadow-2xl">
-                  <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 text-[#FFC400]">
-                    <SportIcon sportId={sport.id} size={32} />
+                  <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mx-auto mb-4 border border-white/20 shadow-md">
+                    <SportIcon sportId={sport.id} size={36} />
                   </div>
                   <h3 className="text-xl font-black text-center mb-2">
                     {language === 'en' ? `Enroll in ${sport.name}` : `إلحاق أبنائكم ببرنامج ${sport.nameAr}`}
@@ -187,10 +184,6 @@ const SportDetail: React.FC = () => {
                     <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
                       <Layers size={16} className="text-[#FFC400]" />
                       <span className="text-sm text-white/90">{t.sportsSection.trainingPrograms}</span>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 tabular-nums">
-                      <Clock size={16} className="text-[#FFC400]" />
-                      <span className="text-sm text-white/90">{t.sportDetailPage.ageLabel}: {sport.ageRange}</span>
                     </div>
                     <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
                       <HeartHandshake size={16} className="text-[#FFC400]" />
@@ -256,8 +249,8 @@ const SportDetail: React.FC = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} w-9 h-9 rounded-lg bg-[#18213F]/80 backdrop-blur-md flex items-center justify-center text-white`}>
-                      <SportIcon sportId={s.id} size={18} />
+                    <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} w-9 h-9 rounded-lg bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm`}>
+                      <SportIcon sportId={s.id} size={20} />
                     </div>
                   </div>
                   <div className="p-5 flex items-center justify-between">
@@ -265,7 +258,6 @@ const SportDetail: React.FC = () => {
                       <h3 className="font-black text-[#18213F] group-hover:text-[#D90429] transition-colors text-lg">
                         {language === 'en' ? s.name : s.nameAr}
                       </h3>
-                      <p className="text-[#5A6E85] text-xs font-semibold tabular-nums">{t.sportsSection.agePrefix} {s.ageRange}</p>
                     </div>
                     <ChevronIcon size={20} className={`text-[#D90429] ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'} transition-transform`} />
                   </div>

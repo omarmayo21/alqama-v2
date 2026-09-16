@@ -29,7 +29,7 @@ import { translations } from '../data/translations';
 
 const Home: React.FC = () => {
   const { language, isRTL } = useLanguage();
-  const { homepage, sports: sanitySports, testimonials: sanityTestimonials, blogPosts: sanityBlogPosts, heroSlides: sanityHeroSlides, t: cmsT } = useSanityData();
+  const { homepage, sports: sanitySports, testimonials: sanityTestimonials, blogPosts: sanityBlogPosts, heroSlides: sanityHeroSlides, paymentProviders, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const currentSports = language === 'en' ? sportsEn : sports;
@@ -403,7 +403,7 @@ const Home: React.FC = () => {
             <img
               src={slide2.image}
               alt={slide2.title}
-              className="w-full h-full object-cover object-[84%_center] sm:object-[42%_center] md:object-[38%_center] animate-hero-bg"
+              className="w-full h-full object-cover object-[84%_center] sm:object-[42%_center] md:object-[38%_center] lg:object-[38%_30%] animate-hero-bg"
               loading="lazy"
             />
           </div>
@@ -419,7 +419,7 @@ const Home: React.FC = () => {
           <div className="container mx-auto px-4 md:px-8 relative z-10 py-12 sm:py-16 md:py-20 min-h-[90vh] flex items-center">
             <div className={`max-w-3xl w-full animate-fade-up relative top-[50px] sm:top-0 pt-8 sm:pt-14 md:pt-20 text-right ${isRTL ? 'md:-mr-6 lg:-mr-15' : 'md:-ml-6 lg:-ml-55'}`}>
               {/* Title: Centered with line-height: 2 on mobile only */}
-              <h1 className="text-center sm:text-right text-[26px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[2] sm:leading-tight mb-4 sm:mb-6 tracking-tight whitespace-pre-line">
+              <h1 className="text-center sm:text-right text-[26px] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-white leading-[2] sm:leading-tight mb-4 sm:mb-6 tracking-tight whitespace-pre-line">
                 {slide2.title}
               </h1>
 
@@ -605,7 +605,7 @@ const Home: React.FC = () => {
                     {t.paymentSection.title}
                   </h2>
                   <p className="text-white/80 text-base md:text-lg leading-relaxed whitespace-pre-line">
-                    {t.paymentSection.subtitle}
+                    {cmsT(paymentProviders?.sectionSubtitle, t.paymentSection.subtitle)}
                   </p>
                 </div>
 

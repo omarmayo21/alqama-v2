@@ -226,7 +226,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
         },
         {
           title: 'تقسيط عبر تابي وتمارا',
-          desc: 'خطط دفع صُممت لتسهيل استثمارك\nفي مواهب أبنائك دون أي ضغوط مالية',
+          desc: 'خيارات سداد ذكية ومريحة بدون فوائد، مصممة خصيصاً لراحة بالك.',
         },
       ],
     },
@@ -243,7 +243,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
     paymentSection: {
       badge: 'قسطها مع القمة',
       title: 'تقسيط عبر تابي وتمارا',
-      subtitle: 'خطط دفع صُممت لتسهيل استثمارك\nفي مواهب أبنائك دون أي ضغوط مالية',
+      subtitle: 'خيارات سداد ذكية ومريحة بدون فوائد، مصممة خصيصاً لراحة بالك.',
       tabbyTitle: 'قسط عبر تابي',
       tabbyDesc: 'قسط مع تابي (Tabby). (قسّم فاتورتك على دفعات شهرية مريحة)',
       tamaraTitle: 'قسط عبر تمارا',
@@ -423,7 +423,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
         },
         {
           title: 'Installments via Tabby & Tamara',
-          desc: 'Payment plans designed to make investing in your children’s talent effortless and stress-free',
+          desc: 'Smart and convenient payment options with no interest, specially designed for your peace of mind.',
         },
       ],
     },
@@ -440,7 +440,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
     paymentSection: {
       badge: 'Installments with ALQIMA',
       title: 'Installments via Tabby & Tamara',
-      subtitle: 'Payment plans designed to make investing in your children’s talent effortless and stress-free',
+      subtitle: 'Smart and convenient payment options with no interest, specially designed for your peace of mind.',
       tabbyTitle: 'Pay with Tabby',
       tabbyDesc: 'Split your payment into easy monthly installments with Tabby',
       tamaraTitle: 'Pay with Tamara',

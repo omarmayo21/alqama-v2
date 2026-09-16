@@ -24,7 +24,7 @@ import { translations } from '../data/translations';
 
 const Offers: React.FC = () => {
   const { language } = useLanguage();
-  const { siteSettings, offers: sanityOffers, t: cmsT } = useSanityData();
+  const { siteSettings, offers: sanityOffers, paymentProviders, t: cmsT } = useSanityData();
   const t = translations[language];
   const currentOffers = language === 'en' ? offersEn : offers;
   const currentSpecialOffers = language === 'en' ? specialOffersEn : specialOffers;
@@ -424,7 +424,7 @@ const Offers: React.FC = () => {
                 </span>
                 <h2 className="text-3xl md:text-4xl font-black mb-4">{t.paymentSection.title}</h2>
                 <p className="text-white/85 text-base md:text-lg leading-relaxed">
-                  {t.paymentSection.subtitle}
+                  {cmsT(paymentProviders?.sectionSubtitle, t.paymentSection.subtitle)}
                 </p>
               </div>
 

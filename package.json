@@ -10,18 +10,19 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "studio": "npm --prefix studio run dev",
-    "studio:build": "npm --prefix studio run build",
-    "migrate:sanity": "node scripts/migrate-to-sanity.mjs"
+    "migrate:sanity": "npx tsx scripts/migrate-to-sanity.mjs"
   },
   "dependencies": {
     "@sanity/client": "^6.29.1",
     "@sanity/image-url": "^1.2.0",
+    "@sanity/vision": "^3.99.0",
     "clsx": "2.1.1",
     "lucide-react": "^1.45.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-router-dom": "^7.18.3",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.5.3",
     "tailwind-merge": "3.4.0"
   },
   "devDependencies": {

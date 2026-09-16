@@ -11,6 +11,7 @@ import {
   BLOG_POST_BY_SLUG_QUERY,
   BLOG_CATEGORIES_QUERY,
   TESTIMONIALS_QUERY,
+  GALLERY_QUERY,
   NAVIGATION_QUERY,
   FOOTER_QUERY,
   LEGAL_PAGE_QUERY,
@@ -27,6 +28,7 @@ import type {
   SanityBlogPost,
   SanityBlogCategory,
   SanityTestimonial,
+  SanityGalleryImage,
   SanityNavigation,
   SanityFooter,
   SanityLegalPage,
@@ -131,6 +133,15 @@ export async function getTestimonials(): Promise<SanityTestimonial[]> {
     return await sanityClient.fetch<SanityTestimonial[]>(TESTIMONIALS_QUERY) || [];
   } catch (error) {
     console.error('[Sanity API] Error fetching testimonials:', error);
+    return [];
+  }
+}
+
+export async function getGalleryImages(): Promise<SanityGalleryImage[]> {
+  try {
+    return await sanityClient.fetch<SanityGalleryImage[]>(GALLERY_QUERY) || [];
+  } catch (error) {
+    console.error('[Sanity API] Error fetching gallery images:', error);
     return [];
   }
 }

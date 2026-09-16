@@ -63,17 +63,35 @@ const Home: React.FC = () => {
   // 2. Dynamic Reviews (Sanity Primary -> Static Fallback)
   const allReviews = useMemo(() => {
     if (sanityTestimonials && sanityTestimonials.length > 0) {
-      return sanityTestimonials.map((r, i) => ({
-        id: r._id || `sanity-r-${i}`,
-        name: language === 'en' ? (r.authorNameEn || r.authorNameAr || 'Parent') : (r.authorNameAr || r.authorNameEn || 'ولي أمر'),
-        rating: r.rating || 5,
-        date: r.reviewDate || (language === 'en' ? 'Verified Review' : 'تقييم موثق'),
-        text: language === 'en' ? (r.reviewTextEn || r.reviewTextAr || '') : (r.reviewTextAr || r.reviewTextEn || ''),
-        initials: r.authorInitials || (r.authorNameAr ? r.authorNameAr.slice(0, 2) : 'ق'),
-      }));
+      return sanityTestimonials.map((r, i) => {
+        const fallback = currentReviews[i] || currentReviews[0];
+        
+        const nameVal = typeof r.name === 'object'
+          ? cmsT(r.name, fallback?.name || '')
+          : (r.name || (language === 'en' ? (r.authorNameEn || r.authorNameAr) : (r.authorNameAr || r.authorNameEn)) || fallback?.name || (language === 'en' ? 'Verified Parent' : 'ولي أمر'));
+
+        const dateVal = typeof r.date === 'object'
+          ? cmsT(r.date, fallback?.date || '')
+          : (r.date || r.reviewDate || fallback?.date || (language === 'en' ? 'Verified Review' : 'تقييم موثق'));
+
+        const textVal = typeof r.text === 'object'
+          ? cmsT(r.text, fallback?.text || '')
+          : (r.text || (language === 'en' ? (r.reviewTextEn || r.reviewTextAr) : (r.reviewTextAr || r.reviewTextEn)) || fallback?.text || '');
+
+        const initialsVal = r.initials || r.authorInitials || fallback?.initials || (nameVal ? nameVal.slice(0, 2) : 'HA');
+
+        return {
+          id: r._id || fallback?.id || `r-${i + 1}`,
+          name: nameVal,
+          rating: typeof r.rating === 'number' ? r.rating : (fallback?.rating || 5),
+          date: dateVal,
+          text: textVal,
+          initials: initialsVal,
+        };
+      });
     }
     return currentReviews;
-  }, [sanityTestimonials, currentReviews, language]);
+  }, [sanityTestimonials, currentReviews, cmsT, language]);
 
   const displayedReviews = showAllReviews ? allReviews : allReviews.slice(0, 6);
 

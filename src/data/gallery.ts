@@ -1,0 +1,123 @@
+export interface GalleryItem {
+  id: string;
+  title: string;
+  titleEn?: string;
+  description?: string;
+  descriptionEn?: string;
+  image: string;
+  category: 'tournaments' | 'events' | 'training' | 'other';
+  categoryLabel?: string;
+  categoryLabelEn?: string;
+  featured?: boolean;
+}
+
+export const galleryItems: GalleryItem[] = [
+  {
+    id: 'g1',
+    title: 'بطولة القمة الرمضانية لكرة القدم',
+    titleEn: 'ALQIMA Ramadan Football Championship',
+    description: 'مباريات حماسية وتتويج الفرق الفائزة بالكؤوس والميداليات في ملاعب الأكاديمية.',
+    descriptionEn: 'Thrilling matches and trophy awards for winning teams on the academy football pitches.',
+    image: '/images/football.jpg',
+    category: 'tournaments',
+    categoryLabel: 'بطولات ومسابقات',
+    categoryLabelEn: 'Tournaments',
+    featured: true,
+  },
+  {
+    id: 'g2',
+    title: 'بطولة جدة للسباحة للفئات السنية',
+    titleEn: 'Jeddah Youth Swimming Championship',
+    description: 'تألق سباحي أكاديمية القمة وحصدهم مراكز متقدمة في المسافات المتنوعة.',
+    descriptionEn: 'ALQIMA young swimmers excelling and securing top rankings across multiple swim styles.',
+    image: '/images/swimming.jpg',
+    category: 'tournaments',
+    categoryLabel: 'بطولات ومسابقات',
+    categoryLabelEn: 'Tournaments',
+    featured: true,
+  },
+  {
+    id: 'g3',
+    title: 'اختبارات الأحزمة وبطولة الكاراتيه السنوية',
+    titleEn: 'Annual Karate Championship & Belt Graduation',
+    description: 'عروض قتالية متميزة واجتياز أبطالنا لاختبارات الترقية للأحزمة المتقدمة بنجاح.',
+    descriptionEn: 'Exceptional kata demonstrations and successful belt graduations for our young martial artists.',
+    image: '/images/karate.jpg',
+    category: 'tournaments',
+    categoryLabel: 'بطولات ومسابقات',
+    categoryLabelEn: 'Tournaments',
+    featured: true,
+  },
+  {
+    id: 'g4',
+    title: 'دوري كرة السلة للصغار',
+    titleEn: 'Junior Basketball League Matches',
+    description: 'أجواء تنافسية وتصويبات حاسمة في صالات كرة السلة المجهزة بأحدث المعايير.',
+    descriptionEn: 'Competitive spirit and decisive shots in our indoor air-conditioned basketball courts.',
+    image: '/images/basketball.jpg',
+    category: 'tournaments',
+    categoryLabel: 'بطولات ومسابقات',
+    categoryLabelEn: 'Tournaments',
+    featured: false,
+  },
+  {
+    id: 'g5',
+    title: 'حفل تكريم أبطال الموسم واليوم المفتوح',
+    titleEn: 'End of Season Champions Celebration & Open Day',
+    description: 'تكريم الأطفال المتفوقين بحضور أولياء الأمور والمدربين في أجواء احتفالية رائعة.',
+    descriptionEn: 'Honoring top achievers alongside parents and certified coaching staff in a festive atmosphere.',
+    image: '/images/about-team.jpg',
+    category: 'events',
+    categoryLabel: 'فعاليات واحتفالات',
+    categoryLabelEn: 'Events',
+    featured: true,
+  },
+  {
+    id: 'g6',
+    title: 'اليوم الرياضي العائلي المفتوح',
+    titleEn: 'ALQIMA Family Fun & Sports Day',
+    description: 'أنشطة ترفيهية ومسابقات عائلية تجمع الآباء والأبناء في بيئة رياضية محفزة.',
+    descriptionEn: 'Exciting sports activities and family challenges bringing parents and kids together.',
+    image: '/images/hero-bg.jpg',
+    category: 'events',
+    categoryLabel: 'فعاليات واحتفالات',
+    categoryLabelEn: 'Events',
+    featured: false,
+  },
+  {
+    id: 'g7',
+    title: 'تدريبات الكيك بوكسينغ وبناء اللياقة البدنية',
+    titleEn: 'Kickboxing Fitness & Agility Sessions',
+    description: 'تمارين رفع اللياقة، الدفاع عن النفس، وزيادة التركيز والسرعة تحت إشراف متخصص.',
+    descriptionEn: 'High-energy fitness drills, self-defense basics, and speed training with expert supervision.',
+    image: '/images/kickboxing.jpg',
+    category: 'training',
+    categoryLabel: 'حصص وتدريبات',
+    categoryLabelEn: 'Training',
+    featured: true,
+  },
+  {
+    id: 'g8',
+    title: 'حصص الجمباز وتطوير المرونة والتوازن',
+    titleEn: 'Gymnastics Flexibility & Core Balance Classes',
+    description: 'تطوير المرونة الحركية، القوة البدنية، والتوافق العضلي العصبي للأولاد والبنات.',
+    descriptionEn: 'Building motor agility, muscular strength, and graceful balance for boys and girls.',
+    image: '/images/gymnastics.jpg',
+    category: 'training',
+    categoryLabel: 'حصص وتدريبات',
+    categoryLabelEn: 'Training',
+    featured: false,
+  },
+  {
+    id: 'g9',
+    title: 'تدريبات السكيتنج وتحديات الرشاقة والسرعة',
+    titleEn: 'Roller Skating Agility & Speed Challenges',
+    description: 'تعليم أساسيات التوازن والتحكم في السكيت مع مسارات تدريبية آمنة وممتعة.',
+    descriptionEn: 'Teaching core balance, speed control, and skating obstacle navigation in a safe indoor setting.',
+    image: '/images/roller-skating.jpg',
+    category: 'training',
+    categoryLabel: 'حصص وتدريبات',
+    categoryLabelEn: 'Training',
+    featured: false,
+  },
+];

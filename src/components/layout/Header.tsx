@@ -37,6 +37,7 @@ const Header: React.FC = () => {
       ],
     },
     { label: t.nav.offers, path: `${basePath}/offers` },
+    { label: t.nav.gallery, path: `${basePath}/gallery` },
     { label: t.nav.blog, path: `${basePath}/blog` },
   ];
 

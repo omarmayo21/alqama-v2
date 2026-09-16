@@ -31,6 +31,7 @@ const Footer: React.FC = () => {
     { label: t.nav.about, path: `${basePath}/about` },
     { label: t.nav.sports, path: `${basePath}/sports` },
     { label: t.nav.offers, path: `${basePath}/offers` },
+    { label: t.nav.gallery, path: `${basePath}/gallery` },
     { label: t.nav.blog, path: `${basePath}/blog` },
   ];
 

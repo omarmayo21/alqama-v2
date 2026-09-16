@@ -4,6 +4,7 @@ export interface TranslationSchema {
     about: string;
     sports: string;
     offers: string;
+    gallery: string;
     blog: string;
     contact: string;
   };
@@ -146,6 +147,22 @@ export interface TranslationSchema {
     relatedArticles: string;
     backToBlog: string;
   };
+  galleryPage: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    allCategory: string;
+    tournamentsCategory: string;
+    eventsCategory: string;
+    trainingCategory: string;
+    otherCategory: string;
+    emptyTitle: string;
+    emptySubtitle: string;
+    closeLightbox: string;
+    nextImage: string;
+    prevImage: string;
+    imageCounter: string;
+  };
   common: {
     whatsappTooltip: string;
     languageToggle: string;
@@ -166,6 +183,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       about: 'من نحن',
       sports: 'الرياضات',
       offers: 'العروض',
+      gallery: 'المعرض',
       blog: 'المدونة',
       contact: 'تواصل معنا',
     },
@@ -324,6 +342,22 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       relatedArticles: 'مقالات ذات صلة',
       backToBlog: 'العودة إلى المدونة',
     },
+    galleryPage: {
+      badge: 'معرض صور الأكاديمية',
+      title: 'لحظات لا تُنسى من مسيرة أبطالنا',
+      subtitle: 'استكشف صور البطولات، الفعاليات، والأنشطة التدريبية اليومية لأطفال أكاديمية القمة الرياضية.',
+      allCategory: 'الكل',
+      tournamentsCategory: 'بطولات ومسابقات',
+      eventsCategory: 'فعاليات واحتفالات',
+      trainingCategory: 'حصص وتدريبات',
+      otherCategory: 'أخرى',
+      emptyTitle: 'لا توجد صور في هذا القسم حالياً',
+      emptySubtitle: 'سيتم إضافة صور جديدة قريباً من فعالياتنا وبطولاتنا القادمة.',
+      closeLightbox: 'إغلاق',
+      nextImage: 'الصورة التالية',
+      prevImage: 'الصورة السابقة',
+      imageCounter: 'من',
+    },
     common: {
       whatsappTooltip: 'تواصل عبر واتساب',
       languageToggle: 'English',
@@ -342,6 +376,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       about: 'About Us',
       sports: 'Sports',
       offers: 'Offers',
+      gallery: 'Gallery',
       blog: 'Blog',
       contact: 'Contact Us',
     },
@@ -491,14 +526,30 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       installmentsNote: 'All offers are eligible for flexible installment payment options through Tabby and Tamara.',
     },
     blogPage: {
-      badge: 'Academy Blog',
+      badge: 'ALQIMA Blog',
       title: 'Sports Articles & Guidance for Parents',
-      subtitle: 'Your comprehensive resource for children fitness, sports nutrition, and child athletic development from our expert coaches.',
+      subtitle: 'Your comprehensive guide to child health, nutrition, and athletic character development with expert advice from our coaches.',
       readMore: 'Read Article',
       readTimePrefix: 'Read time:',
       shareArticle: 'Share Article',
       relatedArticles: 'Related Articles',
       backToBlog: 'Back to Blog',
+    },
+    galleryPage: {
+      badge: 'Academy Photo Gallery',
+      title: 'Unforgettable Moments of Our Young Champions',
+      subtitle: 'Explore photos from championships, tournaments, academy events, and daily training sessions at ALQIMA Sports Academy.',
+      allCategory: 'All',
+      tournamentsCategory: 'Tournaments',
+      eventsCategory: 'Events',
+      trainingCategory: 'Training',
+      otherCategory: 'Other',
+      emptyTitle: 'No photos in this section yet',
+      emptySubtitle: 'New photos will be uploaded soon from our upcoming events and championships.',
+      closeLightbox: 'Close',
+      nextImage: 'Next Image',
+      prevImage: 'Previous Image',
+      imageCounter: 'of',
     },
     common: {
       whatsappTooltip: 'Chat on WhatsApp',

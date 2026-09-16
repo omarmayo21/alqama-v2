@@ -63,19 +63,17 @@ export const BLOG_POSTS_QUERY = `
   *[_type == "blogPost" && isActive != false] | order(publishedAt desc, _createdAt desc){
     ...,
     "slug": slug.current,
-    "imageUrl": mainImage.asset->url,
-    "coverImageUrl": coverImage.asset->url,
-    "category": category->title
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url, coverImage.asset->url),
+    "category": coalesce(categoryText, category->title)
   }
 `;
 
 export const BLOG_POST_BY_SLUG_QUERY = `
-  *[_type == "blogPost" && (slug.current == $slug || slug == $slug)][0]{
+  *[_type == "blogPost" && (slug.current == $slug || slug == $slug || _id == $slug || _id == "blogPost-" + $slug)][0]{
     ...,
     "slug": slug.current,
-    "imageUrl": mainImage.asset->url,
-    "coverImageUrl": coverImage.asset->url,
-    "category": category->title
+    "imageUrl": coalesce(image.asset->url, mainImage.asset->url, coverImage.asset->url),
+    "category": coalesce(categoryText, category->title)
   }
 `;
 
@@ -90,6 +88,13 @@ export const TESTIMONIALS_QUERY = `
   *[_type == "testimonial" && isActive != false] | order(displayOrder asc, _createdAt asc){
     ...,
     "avatarUrl": avatarImage.asset->url
+  }
+`;
+
+export const GALLERY_QUERY = `
+  *[_type == "galleryImage" && isActive != false] | order(displayOrder asc, _createdAt desc){
+    ...,
+    "imageUrl": image.asset->url
   }
 `;
 

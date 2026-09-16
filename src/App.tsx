@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -7,6 +7,7 @@ import About from './pages/About';
 import Sports from './pages/Sports';
 import SportDetail from './pages/SportDetail';
 import Offers from './pages/Offers';
+import Gallery from './pages/Gallery';
 import Blog from './pages/Blog';
 import Article from './pages/Article';
 import Privacy from './pages/Privacy';
@@ -15,6 +16,8 @@ import NotFound from './pages/NotFound';
 import { WHATSAPP_URL } from './utils/constants';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { SanityDataProvider } from './context/SanityDataContext';
+
+const StudioPage = lazy(() => import('./pages/StudioPage'));
 
 // Scroll to top on route change
 const ScrollToTop: React.FC = () => {
@@ -66,6 +69,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/sports" element={<Layout><Sports /></Layout>} />
         <Route path="/sports/:sportId" element={<Layout><SportDetail /></Layout>} />
         <Route path="/offers" element={<Layout><Offers /></Layout>} />
+        <Route path="/gallery" element={<Layout><Gallery /></Layout>} />
         <Route path="/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/blog/:id" element={<Layout><Article /></Layout>} />
         <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
@@ -77,10 +81,29 @@ const AppRoutes: React.FC = () => {
         <Route path="/en/sports" element={<Layout><Sports /></Layout>} />
         <Route path="/en/sports/:sportId" element={<Layout><SportDetail /></Layout>} />
         <Route path="/en/offers" element={<Layout><Offers /></Layout>} />
+        <Route path="/en/gallery" element={<Layout><Gallery /></Layout>} />
         <Route path="/en/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/en/blog/:id" element={<Layout><Article /></Layout>} />
         <Route path="/en/privacy" element={<Layout><Privacy /></Layout>} />
         <Route path="/en/terms" element={<Layout><Terms /></Layout>} />
+
+        {/* Sanity Studio Embedded Route */}
+        <Route
+          path="/studio/*"
+          element={
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-900 text-white font-bold">جاري تحميل لوحة التحكم Sanity Studio...</div>}>
+              <StudioPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/studio"
+          element={
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-900 text-white font-bold">جاري تحميل لوحة التحكم Sanity Studio...</div>}>
+              <StudioPage />
+            </Suspense>
+          }
+        />
 
         {/* 404 Fallback */}
         <Route path="*" element={<NotFound />} />

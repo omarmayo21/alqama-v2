@@ -40,6 +40,11 @@ export const deskStructure: StructureResolver = (S) =>
                 .title('⭐ Testimonials & Reviews / آراء وتقييمات أولياء الأمور')
                 .schemaType('testimonial')
                 .child(S.documentTypeList('testimonial').title('Testimonials / التقييمات')),
+              S.divider(),
+              S.listItem()
+                .title('🖼️ Photo Gallery / معرض صور الأكاديمية')
+                .schemaType('galleryImage')
+                .child(S.documentTypeList('galleryImage').title('Gallery Images / صور المعرض')),
             ])
         ),
 

@@ -17,6 +17,7 @@ import { offer } from './documents/offer';
 import { blogPost } from './documents/blogPost';
 import { blogCategory } from './documents/blogCategory';
 import { testimonial } from './documents/testimonial';
+import { galleryImage } from './documents/galleryImage';
 import { navigation } from './documents/navigation';
 import { footer } from './documents/footer';
 import { legalPage } from './documents/legalPage';
@@ -43,6 +44,7 @@ export const schemaTypes = [
   blogPost,
   blogCategory,
   testimonial,
+  galleryImage,
   navigation,
   footer,
   legalPage,

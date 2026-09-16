@@ -388,19 +388,41 @@ export interface SanityBlogPost {
 export interface SanityTestimonial {
   _id: string;
   _type: 'testimonial';
+  name?: SanityLocalized;
   authorNameAr?: string;
   authorNameEn?: string;
+  initials?: string;
   authorInitials?: string;
+  rating?: number;
+  date?: SanityLocalized;
+  reviewDate?: string;
+  text?: SanityLocalized;
   reviewTextAr?: string;
   reviewTextEn?: string;
   sportAr?: string;
   sportEn?: string;
-  rating?: number;
-  reviewDate?: string;
   source?: string;
   verified?: boolean;
   avatarImage?: SanityImage;
   avatarUrl?: string;
+  displayOrder?: number;
+  isFeatured?: boolean;
+  isActive?: boolean;
+}
+
+export interface SanityGalleryImage {
+  _id: string;
+  _type: 'galleryImage';
+  title?: SanityLocalized;
+  titleAr?: string;
+  titleEn?: string;
+  description?: SanityLocalized;
+  descriptionAr?: string;
+  descriptionEn?: string;
+  image?: SanityImage;
+  imageUrl?: string;
+  category?: 'tournaments' | 'events' | 'training' | 'other' | string;
+  categoryTitle?: SanityLocalized;
   displayOrder?: number;
   isFeatured?: boolean;
   isActive?: boolean;

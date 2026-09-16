@@ -20,9 +20,9 @@ const Article: React.FC = () => {
 
   const post = React.useMemo(() => {
     const foundSanity = sanityPosts?.find(
-      (p) => p.slug === id || p._id === id || p._id === `blogPost-${id}` || (p as any).id === id
+      (p) => p.slug === id || p._id === id || p._id === `blogPost-${id}` || (p as any).id === id || p._id?.replace(/^blogPost-/, '') === id
     );
-    const foundStatic = currentPosts.find((p) => p.id === id);
+    const foundStatic = currentPosts.find((p) => p.id === id || (p as any).slug === id);
 
     if (foundSanity) {
       return {

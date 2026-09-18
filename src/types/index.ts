@@ -9,7 +9,7 @@ export interface Sport {
   ageRange: string;
   sessions?: number;
   features: string[];
-  levels: string[];
+  levels?: string[];
 }
 
 export interface Offer {

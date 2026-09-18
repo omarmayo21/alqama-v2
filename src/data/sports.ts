@@ -18,7 +18,6 @@ export const sports: Sport[] = [
       'إشراف مباشر ومتابعة مستمرة مع أولياء الأمور',
       'إعداد للمشاركة في الدوريات والبطولات',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم', 'نخبة'],
   },
   {
     id: 'basketball',
@@ -37,7 +36,6 @@ export const sports: Sport[] = [
       'متابعة دورية لتطور أداء طفلك',
       'مشاركة في بطولات ومباريات ودية',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم'],
   },
   {
     id: 'swimming',
@@ -54,9 +52,8 @@ export const sports: Sport[] = [
       'إشراف وإنقاذ مستمر بأعلى معايير الأمان',
       'قاعات مريحة تتيح للأهل متابعة التدريب',
       'تطوير اللياقة البدنية والشاملة للطفل',
-      'إعداد للمستويات التنافسية والسباقات',
+      'إعداد للمنافسات والسباقات',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم', 'تنافسي'],
   },
   {
     id: 'karate',
@@ -75,7 +72,6 @@ export const sports: Sport[] = [
       'مسابقات داخلية وتحفيز دائم للأطفال',
       'تطوير المرونة والقوة البدنية المتوازنة',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم', 'بطولي'],
   },
   {
     id: 'kickboxing',
@@ -94,7 +90,6 @@ export const sports: Sport[] = [
       'تجهيزات أمان وسلامة متكاملة للتمارين',
       'بناء الشخصية القوية والثقة بالنفس',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم'],
   },
   {
     id: 'gymnastics',
@@ -113,7 +108,6 @@ export const sports: Sport[] = [
       'أنشطة واستعراضات داخلية ممتعة',
       'بيئة مرحة ومحفزة تشجع الطفل على الحركة',
     ],
-    levels: ['تمهيدي', 'مبتدئ', 'متوسط', 'متقدم'],
   },
   {
     id: 'roller-skating',
@@ -130,9 +124,8 @@ export const sports: Sport[] = [
       'معدات وخوذات حماية وأرضيات مناسبة',
       'فصول تدريبية منظمة لمجموعات متجانسة',
       'تنمية الثقة بالنفس والتحكم بالجسم',
-      'مناسب لجميع الفئات والمستويات من البداية',
+      'مناسب لجميع الأطفال من البداية',
     ],
-    levels: ['مبتدئ', 'متوسط', 'متقدم'],
   },
 ];
 
@@ -154,7 +147,6 @@ export const sportsEn: Sport[] = [
       'Direct supervision with continuous parent follow-up',
       'Preparation for official leagues and youth tournaments',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced', 'Elite'],
   },
   {
     id: 'basketball',
@@ -173,7 +165,6 @@ export const sportsEn: Sport[] = [
       'Periodic assessments of your child’s athletic growth',
       'Participation in friendly tournaments and matches',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced'],
   },
   {
     id: 'swimming',
@@ -192,7 +183,6 @@ export const sportsEn: Sport[] = [
       'Enhancing overall cardiovascular and muscular health',
       'Preparation for competitive swim meets and races',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced', 'Competitive'],
   },
   {
     id: 'karate',
@@ -211,7 +201,6 @@ export const sportsEn: Sport[] = [
       'Encouraging internal academy tournaments and challenges',
       'Balanced flexibility, core strength, and agility',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced', 'Championship'],
   },
   {
     id: 'kickboxing',
@@ -230,7 +219,6 @@ export const sportsEn: Sport[] = [
       'Full protective gear and cushioned safety equipment',
       'Building strong character, composure, and confidence',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced'],
   },
   {
     id: 'gymnastics',
@@ -249,7 +237,6 @@ export const sportsEn: Sport[] = [
       'Fun internal exhibitions and milestone celebrations',
       'An engaging, playful atmosphere encouraging active movement',
     ],
-    levels: ['Introductory', 'Beginner', 'Intermediate', 'Advanced'],
   },
   {
     id: 'roller-skating',
@@ -264,10 +251,9 @@ export const sportsEn: Sport[] = [
       'Fundamental balance, posture, and glide mechanics',
       'Safe turning, speed modulation, and braking techniques',
       'Protective helmets, pads, and specialized track surfaces',
-      'Organized age-matched small group training sessions',
+      'Organized small group training sessions',
       'Nurturing physical coordination and self-confidence',
-      'Suitable for all skill levels from first-timers to advanced',
+      'Suitable for all children from beginners to advanced',
     ],
-    levels: ['Beginner', 'Intermediate', 'Advanced'],
   },
 ];

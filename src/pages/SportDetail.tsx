@@ -113,43 +113,21 @@ const SportDetail: React.FC = () => {
                 </div>
               </ScrollReveal>
 
-              {/* Training Modules / Program Highlights */}
-              <ScrollReveal delay={120}>
-                <h3 className="text-2xl font-black text-[#18213F] mb-5">{t.sportDetailPage.levelsTitle}</h3>
-                <div className="flex flex-wrap gap-3 mb-10">
-                  {sport.levels.map((level) => (
-                    <div
-                      key={level}
-                      className="flex items-center gap-2.5 bg-white border-2 border-[#E8EAF0] rounded-xl px-5 py-3 shadow-sm"
-                    >
-                      <ShieldCheck size={18} className="text-[#D90429]" />
-                      <span className="font-bold text-[#18213F]">
-                        {language === 'en' ? `Level: ${level}` : `مستوى: ${level}`}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </ScrollReveal>
-
               {/* Schedule */}
               {sportSchedule.length > 0 && (
-                <ScrollReveal delay={160}>
+                <ScrollReveal delay={120}>
                   <h3 className="text-2xl font-black text-[#18213F] mb-5">
                     {language === 'en' ? 'Available Training Schedule' : 'جدول الحصص المتاحة'}
                   </h3>
                   <div className="bg-[#F8F9FA] rounded-2xl overflow-hidden mb-8 border border-gray-200">
-                    <div className="grid grid-cols-4 bg-[#18213F] text-white text-sm font-bold px-5 py-3.5">
+                    <div className="grid grid-cols-2 bg-[#18213F] text-white text-sm font-bold px-5 py-3.5">
                       <span>{language === 'en' ? 'Day' : 'اليوم'}</span>
                       <span>{language === 'en' ? 'Time' : 'الوقت'}</span>
-                      <span>{language === 'en' ? 'Level' : 'الفئة'}</span>
-                      <span>{language === 'en' ? 'Coach' : 'المدرب'}</span>
                     </div>
                     {sportSchedule.map((item) => (
-                      <div key={item.id} className="grid grid-cols-4 text-sm px-5 py-4 border-b border-gray-200 schedule-row hover:bg-red-50/40 transition-colors">
+                      <div key={item.id} className="grid grid-cols-2 text-sm px-5 py-4 border-b border-gray-200 schedule-row hover:bg-red-50/40 transition-colors">
                         <span className="font-bold text-[#18213F]">{item.day}</span>
                         <span className="text-[#5A6E85] tabular-nums font-medium">{item.time}</span>
-                        <span className="text-[#D90429] font-bold">{item.level}</span>
-                        <span className="text-[#18213F] font-medium">{item.coach}</span>
                       </div>
                     ))}
                   </div>

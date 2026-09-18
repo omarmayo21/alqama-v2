@@ -85,13 +85,6 @@ export const sport = defineType({
       of: [{ type: 'localizedString' }],
     }),
     defineField({
-      name: 'levels',
-      title: 'Training Levels / المستويات التدريبية',
-      type: 'array',
-      group: 'curriculum',
-      of: [{ type: 'localizedString' }],
-    }),
-    defineField({
       name: 'schedule',
       title: 'Training Schedule Sessions / جدول الحصص التدريبية المتاحة',
       type: 'array',

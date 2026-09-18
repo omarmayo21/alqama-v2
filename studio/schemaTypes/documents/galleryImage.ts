@@ -2,34 +2,57 @@ import { defineType, defineField } from 'sanity';
 
 export const galleryImage = defineType({
   name: 'galleryImage',
-  title: 'Gallery Image / صورة المعرض',
+  title: 'Gallery Album / ألبوم الفعالية والبطولة',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Image Title / عنوان الصورة',
+      title: 'Album / Event Title / عنوان الألبوم أو البطولة',
       type: 'localizedString',
       validation: (Rule) => Rule.required(),
-      description: 'مثال: تتويج أبطال السباحة في بطولة جدة / Jeddah Swimming Championship Awarding',
+      description: 'مثال: بطولة كرة القدم الرمضانية / ALQIMA Ramadan Football Championship',
     }),
     defineField({
       name: 'description',
-      title: 'Description (Optional) / وصف تفصيلي أو مناسبة الصورة',
+      title: 'Description (Optional) / نبذة أو وصف مختصر عن الفعالية',
       type: 'localizedText',
-      description: 'وصف مختصر أو مناسبة التقاط الصورة',
+      description: 'وصف الفعالية أو تفاصيل البطولة والنتائج',
     }),
     defineField({
-      name: 'image',
-      title: 'Image File / ملف الصورة',
+      name: 'coverImage',
+      title: 'Cover Image / صورة الغلاف الرئيسية للألبوم',
       type: 'image',
       options: {
         hotspot: true,
       },
-      validation: (Rule) => Rule.required(),
+      description: 'الصورة الرئيسية التي تظهر في بطاقة الألبوم في صفحة المعرض',
+    }),
+    defineField({
+      name: 'image',
+      title: 'Legacy Image / صورة بديلة',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      hidden: ({ document }) => Boolean(document?.coverImage),
+    }),
+    defineField({
+      name: 'images',
+      title: 'Album Photos / جميع صور الألبوم والفعالية',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+        },
+      ],
+      description: 'مجموعة الصور التابعة لهذه البطولة أو الفعالية التي تظهر داخل الألبوم',
     }),
     defineField({
       name: 'category',
-      title: 'Image Category / تصنيف الصورة',
+      title: 'Event Category / تصنيف الفعالية',
       type: 'string',
       options: {
         list: [
@@ -57,13 +80,13 @@ export const galleryImage = defineType({
     }),
     defineField({
       name: 'isFeatured',
-      title: 'Featured Image / صورة مميزة',
+      title: 'Featured Album / ألبوم مميز',
       type: 'boolean',
       initialValue: false,
     }),
     defineField({
       name: 'isActive',
-      title: 'Active / مفعّلة في المعرض',
+      title: 'Active / مفعّل في المعرض',
       type: 'boolean',
       initialValue: true,
     }),
@@ -85,10 +108,12 @@ export const galleryImage = defineType({
       titleAr: 'title.ar',
       titleEn: 'title.en',
       category: 'category',
-      media: 'image',
+      cover: 'coverImage',
+      legacyMedia: 'image',
+      images: 'images',
       isActive: 'isActive',
     },
-    prepare({ titleAr, titleEn, category, media, isActive }) {
+    prepare({ titleAr, titleEn, category, cover, legacyMedia, images, isActive }) {
       const categoryNames: Record<string, string> = {
         tournaments: '🏆 بطولات',
         events: '🎉 فعاليات',
@@ -97,10 +122,11 @@ export const galleryImage = defineType({
       };
       const catLabel = categoryNames[category] || category || '';
       const title = titleAr || titleEn || 'بدون عنوان / Untitled';
+      const imgCount = Array.isArray(images) ? images.length : 0;
       return {
         title: `${isActive === false ? '❌ [غير مفعّل] ' : ''}${title}`,
-        subtitle: catLabel,
-        media,
+        subtitle: `${catLabel} • ${imgCount > 0 ? `${imgCount} صور` : 'صورة الغلاف'}`,
+        media: cover || legacyMedia,
       };
     },
   },

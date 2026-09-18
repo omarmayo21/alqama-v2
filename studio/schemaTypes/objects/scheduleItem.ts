@@ -64,42 +64,6 @@ export const scheduleItem = defineType({
       placeholder: '05:30 PM',
     }),
     defineField({
-      name: 'ageGroupAr',
-      title: 'Age Group (Arabic) / الفئة العمرية بالعربية',
-      type: 'string',
-      placeholder: '4 - 8 سنوات',
-    }),
-    defineField({
-      name: 'ageGroupEn',
-      title: 'Age Group (English) / الفئة العمرية بالإنجليزية',
-      type: 'string',
-      placeholder: '4 - 8 Years',
-    }),
-    defineField({
-      name: 'levelAr',
-      title: 'Level (Arabic) / المستوى بالعربية',
-      type: 'string',
-      placeholder: 'مبتدئ / متوسط / متقدم / نخبة',
-    }),
-    defineField({
-      name: 'levelEn',
-      title: 'Level (English) / المستوى بالإنجليزية',
-      type: 'string',
-      placeholder: 'Beginner / Intermediate / Advanced / Elite',
-    }),
-    defineField({
-      name: 'coachAr',
-      title: 'Coach (Arabic) / المدرب بالعربية',
-      type: 'string',
-      placeholder: 'كابتن أحمد',
-    }),
-    defineField({
-      name: 'coachEn',
-      title: 'Coach (English) / المدرب بالإنجليزية',
-      type: 'string',
-      placeholder: 'Coach Ahmed',
-    }),
-    defineField({
       name: 'locationAr',
       title: 'Venue / الصالة أو الملعب بالعربية',
       type: 'string',
@@ -130,16 +94,12 @@ export const scheduleItem = defineType({
       dayEn: 'dayEn',
       start: 'startTimeAr',
       end: 'endTimeAr',
-      level: 'levelAr',
-      coach: 'coachAr',
-      age: 'ageGroupAr',
       isActive: 'isActive',
     },
-    prepare({ dayAr, dayEn, start, end, level, coach, age, isActive }) {
+    prepare({ dayAr, dayEn, start, end, isActive }) {
       const timing = start && end ? `${start} - ${end}` : (start || '');
       return {
         title: `${dayAr || dayEn || 'Session'} ${timing ? `(${timing})` : ''} ${isActive === false ? '⛔ [معطل]' : '✅'}`,
-        subtitle: [age, level, coach ? `المدرب: ${coach}` : null].filter(Boolean).join(' • '),
       };
     },
   },

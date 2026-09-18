@@ -237,7 +237,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       viewAll: 'عرض جميع الرياضات',
       agePrefix: 'الفئة العمرية:',
       levelLabel: 'المستويات:',
-      trainingPrograms: 'برامج تدريبية لكافة المستويات',
+      trainingPrograms: 'برامج تدريبية متخصصة',
       detailsBtn: 'تفاصيل البرنامج',
     },
     paymentSection: {
@@ -434,7 +434,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       viewAll: 'View All Sports',
       agePrefix: 'Age Range:',
       levelLabel: 'Levels:',
-      trainingPrograms: 'Training Programs for Every Level',
+      trainingPrograms: 'Specialized Training Programs',
       detailsBtn: 'Program Details',
     },
     paymentSection: {

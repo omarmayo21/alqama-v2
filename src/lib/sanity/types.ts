@@ -424,8 +424,12 @@ export interface SanityGalleryImage {
   description?: SanityLocalized;
   descriptionAr?: string;
   descriptionEn?: string;
+  coverImage?: SanityImage;
+  coverImageUrl?: string;
   image?: SanityImage;
   imageUrl?: string;
+  images?: SanityImage[];
+  imagesUrls?: string[];
   category?: 'tournaments' | 'events' | 'training' | 'other' | string;
   categoryTitle?: SanityLocalized;
   displayOrder?: number;

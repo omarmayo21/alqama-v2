@@ -80,16 +80,16 @@ const About: React.FC = () => {
                 {cmsT(
                   aboutPage?.storyParagraph1,
                   language === 'en'
-                    ? 'Established in 2014 in Jeddah with an inspiring vision: providing a safe, elite, and holistic sports environment for the rising generation. Today, we proudly serve hundreds of families across 7 specialized athletic disciplines.'
-                    : 'تأسست أكاديمية القمة الرياضية عام ٢٠١٤ في جدة برؤية طموحة: توفير بيئة رياضية آمنة واحترافية شاملة للأجيال الناشئة. واليوم نفخر بخدمة مئات العائلات وأبنائهم في سبع تخصصات رياضية متكاملة.'
+                    ? "We are Alqima Sports Academy for Children in Jeddah, a leading institution committed to developing and nurturing children's athletic talents across a wide range of sports. We were founded on an ambitious vision aimed at preparing a generation capable of excellence and creativity in the field of sports, through specialized training programs."
+                    : 'نحن في أكاديمية القمة الرياضية للأطفال في جدة، مؤسسة رائدة تلتزم بتنمية وصقل المواهب الرياضية للأطفال عبر مجموعة واسعة من الرياضات. تأسسنا على أساس رؤية طموحة تستهدف إعداد جيل قادر على التميز والإبداع في المجال الرياضي، وذلك من خلال برامج تدريبية متخصصة.'
                 )}
               </p>
               <p className="text-[#5A6E85] text-base md:text-lg leading-relaxed mb-8 font-medium">
                 {cmsT(
                   aboutPage?.storyParagraph2,
                   language === 'en'
-                    ? 'We believe sport is more than physical training; it is a life classroom nurturing discipline, leadership, and resilient self-confidence inside and outside the arena.'
-                    : 'نؤمن أن الرياضة ليست مجرد تمرين بدني، بل هي مدرسة حياة تُعزز الانضباط، والروح القيادية، والإصرار على التميز لدى أطفالكم داخل وخارج الملعب.'
+                    ? 'These programs enable children to achieve their full potential and advance their athletic abilities. We work diligently to provide a rich and motivating educational experience, supported by qualified coaching staff and advanced sports facilities, helping shape outstanding young athletes who possess skill, discipline, and sportsmanship.'
+                    : 'مما يمكنهم من تحقيق إمكاناتهم الكاملة والارتقاء بمستوياتهم الرياضية. نعمل بجد لضمان تقديم تجربة تعليمية غنية ومحفزة، مدعومة بكادر تدريبي مؤهل ومرافق رياضية متطورة، لتشكيل رياضيين متميزين يتمتعون بالمهارة، الانضباط، والروح الرياضية.'
                 )}
               </p>
 

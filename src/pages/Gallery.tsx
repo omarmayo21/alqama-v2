@@ -8,9 +8,9 @@ import {
   X, 
   ChevronLeft, 
   ChevronRight, 
-  MessageCircle,
-  Sparkles,
-  Image as ImageIcon
+  MessageCircle, 
+  Sparkles, 
+  Image as ImageIcon 
 } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import ScrollReveal from '../components/animation/ScrollReveal';
@@ -22,28 +22,58 @@ import { WHATSAPP_URL } from '../utils/constants';
 
 type CategoryFilter = 'all' | 'tournaments' | 'events' | 'training' | 'other';
 
+interface ResolvedAlbum {
+  id: string;
+  title: string;
+  description?: string;
+  coverImage: string;
+  images: string[];
+  category: CategoryFilter;
+  categoryLabel: string;
+  featured?: boolean;
+}
+
 const Gallery: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const { galleryImages: sanityGallery, t: cmsT } = useSanityData();
   const t = translations[language];
 
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  // State for active album and active photo index inside that album
+  const [selectedAlbumIndex, setSelectedAlbumIndex] = useState<number | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
 
-  // 1. Resolve Dynamic Gallery Data (Sanity Primary -> Static Fallback)
-  const allImages = useMemo(() => {
+  // 1. Resolve Dynamic Gallery Albums Data (Sanity Primary -> Static Fallback)
+  const allAlbums: ResolvedAlbum[] = useMemo(() => {
     if (sanityGallery && sanityGallery.length > 0) {
-      return sanityGallery.map((img, idx) => {
-        const cat = (img.category as CategoryFilter) || 'other';
+      return sanityGallery.map((doc, idx) => {
+        const cat = (doc.category as CategoryFilter) || 'other';
         const fallback = galleryItems[idx] || galleryItems[0];
+        const cover = doc.coverImageUrl || doc.imageUrl || fallback?.coverImage || fallback?.image || '/images/hero-bg.jpg';
+        
+        let albumImages: string[] = [];
+        if (doc.imagesUrls && Array.isArray(doc.imagesUrls) && doc.imagesUrls.length > 0) {
+          albumImages = doc.imagesUrls.filter(Boolean);
+        } else if (fallback?.images && Array.isArray(fallback.images) && fallback.images.length > 0) {
+          albumImages = fallback.images;
+        } else {
+          albumImages = [cover];
+        }
+
+        // Ensure cover is in the album list if not already
+        if (!albumImages.includes(cover)) {
+          albumImages = [cover, ...albumImages];
+        }
+
         return {
-          id: img._id || `gallery-${idx}`,
-          title: cmsT(img.title, language === 'en' ? (img.titleEn || fallback?.titleEn || fallback?.title) : (img.titleAr || fallback?.title)),
-          description: cmsT(img.description, language === 'en' ? (img.descriptionEn || '') : (img.descriptionAr || '')),
-          image: img.imageUrl || fallback?.image || '/images/hero-bg.jpg',
+          id: doc._id || `album-${idx}`,
+          title: cmsT(doc.title, language === 'en' ? (doc.titleEn || fallback?.titleEn || fallback?.title) : (doc.titleAr || fallback?.title)),
+          description: cmsT(doc.description, language === 'en' ? (doc.descriptionEn || '') : (doc.descriptionAr || '')),
+          coverImage: cover,
+          images: albumImages,
           category: cat,
-          categoryLabel: img.categoryTitle
-            ? cmsT(img.categoryTitle, '')
+          categoryLabel: doc.categoryTitle
+            ? cmsT(doc.categoryTitle, '')
             : cat === 'tournaments'
             ? t.galleryPage.tournamentsCategory
             : cat === 'events'
@@ -51,32 +81,42 @@ const Gallery: React.FC = () => {
             : cat === 'training'
             ? t.galleryPage.trainingCategory
             : t.galleryPage.otherCategory,
-          featured: img.isFeatured || false,
+          featured: doc.isFeatured || false,
         };
       });
     }
-    return galleryItems.map((item) => ({
-      id: item.id,
-      title: language === 'en' ? (item.titleEn || item.title) : item.title,
-      description: language === 'en' ? (item.descriptionEn || '') : (item.description || ''),
-      image: item.image,
-      category: item.category,
-      categoryLabel: item.category === 'tournaments'
-        ? t.galleryPage.tournamentsCategory
-        : item.category === 'events'
-        ? t.galleryPage.eventsCategory
-        : item.category === 'training'
-        ? t.galleryPage.trainingCategory
-        : t.galleryPage.otherCategory,
-      featured: item.featured || false,
-    }));
+
+    return galleryItems.map((item) => {
+      const cover = item.coverImage || item.image;
+      let albumImages = item.images && item.images.length > 0 ? item.images : [cover];
+      if (!albumImages.includes(cover)) {
+        albumImages = [cover, ...albumImages];
+      }
+
+      return {
+        id: item.id,
+        title: language === 'en' ? (item.titleEn || item.title) : item.title,
+        description: language === 'en' ? (item.descriptionEn || '') : (item.description || ''),
+        coverImage: cover,
+        images: albumImages,
+        category: item.category as CategoryFilter,
+        categoryLabel: item.category === 'tournaments'
+          ? t.galleryPage.tournamentsCategory
+          : item.category === 'events'
+          ? t.galleryPage.eventsCategory
+          : item.category === 'training'
+          ? t.galleryPage.trainingCategory
+          : t.galleryPage.otherCategory,
+        featured: item.featured || false,
+      };
+    });
   }, [sanityGallery, language, cmsT, t.galleryPage]);
 
-  // Filtered list
-  const filteredImages = useMemo(() => {
-    if (activeCategory === 'all') return allImages;
-    return allImages.filter((img) => img.category === activeCategory);
-  }, [allImages, activeCategory]);
+  // Filtered albums list
+  const filteredAlbums = useMemo(() => {
+    if (activeCategory === 'all') return allAlbums;
+    return allAlbums.filter((a) => a.category === activeCategory);
+  }, [allAlbums, activeCategory]);
 
   // Categories configuration with icons & counts
   const categories = useMemo(() => [
@@ -84,65 +124,73 @@ const Gallery: React.FC = () => {
       id: 'all' as CategoryFilter,
       label: t.galleryPage.allCategory,
       icon: Layers,
-      count: allImages.length,
+      count: allAlbums.length,
     },
     {
       id: 'tournaments' as CategoryFilter,
       label: t.galleryPage.tournamentsCategory,
       icon: Trophy,
-      count: allImages.filter((img) => img.category === 'tournaments').length,
+      count: allAlbums.filter((img) => img.category === 'tournaments').length,
     },
     {
       id: 'events' as CategoryFilter,
       label: t.galleryPage.eventsCategory,
       icon: Calendar,
-      count: allImages.filter((img) => img.category === 'events').length,
+      count: allAlbums.filter((img) => img.category === 'events').length,
     },
     {
       id: 'training' as CategoryFilter,
       label: t.galleryPage.trainingCategory,
       icon: Dumbbell,
-      count: allImages.filter((img) => img.category === 'training').length,
+      count: allAlbums.filter((img) => img.category === 'training').length,
     },
     {
       id: 'other' as CategoryFilter,
       label: t.galleryPage.otherCategory,
       icon: ImageIcon,
-      count: allImages.filter((img) => img.category === 'other').length,
+      count: allAlbums.filter((img) => img.category === 'other').length,
     },
-  ].filter((c) => c.id === 'all' || c.count > 0), [allImages, t.galleryPage]);
+  ].filter((c) => c.id === 'all' || c.count > 0), [allAlbums, t.galleryPage]);
 
-  // Lightbox Navigation Handlers
-  const handlePrev = useCallback(() => {
-    if (lightboxIndex === null) return;
-    setLightboxIndex((prev) => (prev === null ? null : prev === 0 ? filteredImages.length - 1 : prev - 1));
-  }, [lightboxIndex, filteredImages.length]);
+  const activeAlbum = selectedAlbumIndex !== null ? filteredAlbums[selectedAlbumIndex] : null;
 
-  const handleNext = useCallback(() => {
-    if (lightboxIndex === null) return;
-    setLightboxIndex((prev) => (prev === null ? null : prev === filteredImages.length - 1 ? 0 : prev + 1));
-  }, [lightboxIndex, filteredImages.length]);
+  const handleOpenAlbum = (albumIdx: number) => {
+    setSelectedAlbumIndex(albumIdx);
+    setActivePhotoIndex(0);
+  };
 
   const handleClose = useCallback(() => {
-    setLightboxIndex(null);
+    setSelectedAlbumIndex(null);
+    setActivePhotoIndex(0);
   }, []);
+
+  // Navigation between photos inside the active album
+  const handlePrevPhoto = useCallback(() => {
+    if (!activeAlbum || activeAlbum.images.length <= 1) return;
+    setActivePhotoIndex((prev) => (prev === 0 ? activeAlbum.images.length - 1 : prev - 1));
+  }, [activeAlbum]);
+
+  const handleNextPhoto = useCallback(() => {
+    if (!activeAlbum || activeAlbum.images.length <= 1) return;
+    setActivePhotoIndex((prev) => (prev === activeAlbum.images.length - 1 ? 0 : prev + 1));
+  }, [activeAlbum]);
 
   // Keyboard navigation for Lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxIndex === null) return;
+      if (selectedAlbumIndex === null) return;
       if (e.key === 'Escape') handleClose();
-      if (e.key === 'ArrowRight') isRTL ? handlePrev() : handleNext();
-      if (e.key === 'ArrowLeft') isRTL ? handleNext() : handlePrev();
+      if (e.key === 'ArrowRight') isRTL ? handlePrevPhoto() : handleNextPhoto();
+      if (e.key === 'ArrowLeft') isRTL ? handleNextPhoto() : handlePrevPhoto();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex, isRTL, handlePrev, handleNext, handleClose]);
+  }, [selectedAlbumIndex, isRTL, handlePrevPhoto, handleNextPhoto, handleClose]);
 
   // Prevent background scrolling when Lightbox is open
   useEffect(() => {
-    if (lightboxIndex !== null) {
+    if (selectedAlbumIndex !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -150,9 +198,7 @@ const Gallery: React.FC = () => {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [lightboxIndex]);
-
-  const activeLightboxImage = lightboxIndex !== null ? filteredImages[lightboxIndex] : null;
+  }, [selectedAlbumIndex]);
 
   return (
     <div>
@@ -178,7 +224,7 @@ const Gallery: React.FC = () => {
                     key={cat.id}
                     onClick={() => {
                       setActiveCategory(cat.id);
-                      setLightboxIndex(null);
+                      setSelectedAlbumIndex(null);
                     }}
                     className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-xs md:text-sm transition-all duration-300 cursor-pointer shadow-sm ${
                       isActive
@@ -201,31 +247,43 @@ const Gallery: React.FC = () => {
             </div>
           </ScrollReveal>
 
-          {/* Photos Grid */}
-          {filteredImages.length > 0 ? (
+          {/* Albums Grid */}
+          {filteredAlbums.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {filteredImages.map((item, idx) => (
-                <ScrollReveal key={item.id} delay={idx * 50}>
+              {filteredAlbums.map((album, idx) => (
+                <ScrollReveal key={album.id} delay={idx * 50}>
                   <div
-                    onClick={() => setLightboxIndex(idx)}
+                    onClick={() => handleOpenAlbum(idx)}
                     className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 cursor-pointer flex flex-col h-full"
                   >
-                    {/* Image Box */}
+                    {/* Cover Image Box */}
                     <div className="relative h-64 md:h-72 overflow-hidden bg-[#18213F]">
                       <img
-                        src={item.image}
-                        alt={item.title}
+                        src={album.coverImage}
+                        alt={album.title}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                         loading="lazy"
                       />
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#18213F]/90 via-[#18213F]/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
 
-                      {/* Category Badge */}
-                      <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'}`}>
-                        <span className="inline-flex items-center gap-1.5 bg-[#18213F]/80 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
+                      {/* Top Badges */}
+                      <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} flex items-center gap-2`}>
+                        <span className="inline-flex items-center gap-1.5 bg-[#18213F]/85 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
                           <Sparkles size={12} className="text-[#FFC400]" />
-                          <span>{item.categoryLabel}</span>
+                          <span>{album.categoryLabel}</span>
+                        </span>
+                      </div>
+
+                      {/* Photo Count Badge */}
+                      <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'}`}>
+                        <span className="inline-flex items-center gap-1.5 bg-black/60 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-md tabular-nums">
+                          <ImageIcon size={13} className="text-white" />
+                          <span>
+                            {language === 'en' 
+                              ? `${album.images.length} ${album.images.length === 1 ? 'Photo' : 'Photos'}`
+                              : `${album.images.length} ${album.images.length === 1 ? 'صورة' : 'صور'}`}
+                          </span>
                         </span>
                       </div>
 
@@ -237,17 +295,21 @@ const Gallery: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Image Details */}
+                    {/* Album Details */}
                     <div className="p-6 flex flex-col flex-1 justify-between bg-white">
                       <div>
                         <h3 className="text-lg md:text-xl font-black text-[#18213F] mb-2 leading-tight group-hover:text-[#D90429] transition-colors">
-                          {item.title}
+                          {album.title}
                         </h3>
-                        {item.description && (
+                        {album.description && (
                           <p className="text-[#5A6E85] text-sm leading-relaxed font-medium line-clamp-2">
-                            {item.description}
+                            {album.description}
                           </p>
                         )}
+                      </div>
+                      <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#D90429]">
+                        <span>{language === 'en' ? 'Open Album' : 'عرض الألبوم'}</span>
+                        <span>{language === 'en' ? `${album.images.length} Images` : `${album.images.length} صور`}</span>
                       </div>
                     </div>
                   </div>
@@ -266,23 +328,29 @@ const Gallery: React.FC = () => {
         </div>
       </section>
 
-      {/* Lightbox Modal */}
-      {lightboxIndex !== null && activeLightboxImage && (
+      {/* Album Lightbox Modal */}
+      {selectedAlbumIndex !== null && activeAlbum && (
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 md:p-8 animate-fade-in"
+          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 md:p-6 animate-fade-in overflow-y-auto"
           onClick={handleClose}
         >
           {/* Top Bar: Counter & Close */}
           <div
-            className="w-full flex items-center justify-between z-20 max-w-6xl"
+            className="w-full flex items-center justify-between z-20 max-w-6xl mb-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-white/80 font-bold text-sm bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm tabular-nums">
-              <span>{lightboxIndex + 1}</span>
-              <span className="mx-1.5 text-white/50">{t.galleryPage.imageCounter}</span>
-              <span>{filteredImages.length}</span>
+            <div className="flex items-center gap-3">
+              <div className="text-white/90 font-bold text-sm bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm tabular-nums flex items-center gap-2">
+                <ImageIcon size={16} className="text-[#FFC400]" />
+                <span>{activePhotoIndex + 1}</span>
+                <span className="text-white/50">{t.galleryPage.imageCounter}</span>
+                <span>{activeAlbum.images.length}</span>
+              </div>
+              <span className="hidden sm:inline-block text-xs font-bold text-white/70 bg-white/5 px-3 py-2 rounded-xl">
+                {activeAlbum.title}
+              </span>
             </div>
 
             <button
@@ -295,15 +363,15 @@ const Gallery: React.FC = () => {
             </button>
           </div>
 
-          {/* Center Stage: Image + Navigation Arrows */}
+          {/* Center Stage: Large Main Image + Nav Arrows */}
           <div
-            className="relative w-full max-w-5xl flex-1 flex items-center justify-center my-4"
+            className="relative w-full max-w-5xl flex-1 flex items-center justify-center my-2"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Prev Button */}
-            {filteredImages.length > 1 && (
+            {activeAlbum.images.length > 1 && (
               <button
-                onClick={isRTL ? handleNext : handlePrev}
+                onClick={isRTL ? handleNextPhoto : handlePrevPhoto}
                 className={`absolute ${isRTL ? 'right-2 md:-right-6' : 'left-2 md:-left-6'} z-30 p-3.5 rounded-2xl bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
                 aria-label={t.galleryPage.prevImage}
               >
@@ -312,18 +380,19 @@ const Gallery: React.FC = () => {
             )}
 
             {/* Main Image */}
-            <div className="relative max-h-[70vh] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40">
+            <div className="relative max-h-[55vh] md:max-h-[60vh] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40 flex items-center justify-center">
               <img
-                src={activeLightboxImage.image}
-                alt={activeLightboxImage.title}
-                className="max-h-[70vh] w-auto object-contain rounded-2xl animate-fade-up select-none"
+                key={activePhotoIndex}
+                src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
+                alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
+                className="max-h-[55vh] md:max-h-[60vh] w-auto object-contain rounded-2xl animate-fade-in select-none"
               />
             </div>
 
             {/* Next Button */}
-            {filteredImages.length > 1 && (
+            {activeAlbum.images.length > 1 && (
               <button
-                onClick={isRTL ? handlePrev : handleNext}
+                onClick={isRTL ? handlePrevPhoto : handleNextPhoto}
                 className={`absolute ${isRTL ? 'left-2 md:-left-6' : 'right-2 md:-right-6'} z-30 p-3.5 rounded-2xl bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
                 aria-label={t.galleryPage.nextImage}
               >
@@ -332,20 +401,50 @@ const Gallery: React.FC = () => {
             )}
           </div>
 
-          {/* Bottom Caption */}
+          {/* Thumbnails Strip */}
+          {activeAlbum.images.length > 1 && (
+            <div
+              className="w-full max-w-4xl my-2 px-2 py-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 overflow-x-auto flex items-center justify-center gap-2.5 z-20 scrollbar-thin"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {activeAlbum.images.map((imgUrl, thumbIdx) => {
+                const isActiveThumb = thumbIdx === activePhotoIndex;
+                return (
+                  <button
+                    key={`${imgUrl}-${thumbIdx}`}
+                    onClick={() => setActivePhotoIndex(thumbIdx)}
+                    className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
+                      isActiveThumb 
+                        ? 'border-[#D90429] scale-105 shadow-lg shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/50' 
+                        : 'border-white/20 opacity-60 hover:opacity-100 hover:border-white/60'
+                    }`}
+                  >
+                    <img 
+                      src={imgUrl} 
+                      alt={`Thumbnail ${thumbIdx + 1}`} 
+                      className="w-full h-full object-cover" 
+                      loading="lazy"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Bottom Caption & Description */}
           <div
-            className="w-full max-w-3xl text-center bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10 z-20"
+            className="w-full max-w-3xl text-center bg-white/10 backdrop-blur-md p-4 md:p-5 rounded-2xl border border-white/10 z-20 mt-1"
             onClick={(e) => e.stopPropagation()}
           >
             <span className="inline-block bg-[#D90429] text-white text-xs font-black px-3 py-1 rounded-lg mb-2">
-              {activeLightboxImage.categoryLabel}
+              {activeAlbum.categoryLabel}
             </span>
-            <h4 className="text-white text-lg md:text-xl font-black mb-1">
-              {activeLightboxImage.title}
+            <h4 className="text-white text-base md:text-lg font-black mb-1">
+              {activeAlbum.title}
             </h4>
-            {activeLightboxImage.description && (
-              <p className="text-white/80 text-sm font-medium leading-relaxed">
-                {activeLightboxImage.description}
+            {activeAlbum.description && (
+              <p className="text-white/80 text-xs md:text-sm font-medium leading-relaxed">
+                {activeAlbum.description}
               </p>
             )}
           </div>

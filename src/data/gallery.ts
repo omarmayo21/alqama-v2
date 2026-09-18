@@ -5,6 +5,8 @@ export interface GalleryItem {
   description?: string;
   descriptionEn?: string;
   image: string;
+  coverImage?: string;
+  images: string[];
   category: 'tournaments' | 'events' | 'training' | 'other';
   categoryLabel?: string;
   categoryLabelEn?: string;
@@ -19,6 +21,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'مباريات حماسية وتتويج الفرق الفائزة بالكؤوس والميداليات في ملاعب الأكاديمية.',
     descriptionEn: 'Thrilling matches and trophy awards for winning teams on the academy football pitches.',
     image: '/images/football.jpg',
+    coverImage: '/images/football.jpg',
+    images: ['/images/football.jpg', '/images/about-team.jpg', '/images/hero-bg.jpg'],
     category: 'tournaments',
     categoryLabel: 'بطولات ومسابقات',
     categoryLabelEn: 'Tournaments',
@@ -31,6 +35,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'تألق سباحي أكاديمية القمة وحصدهم مراكز متقدمة في المسافات المتنوعة.',
     descriptionEn: 'ALQIMA young swimmers excelling and securing top rankings across multiple swim styles.',
     image: '/images/swimming.jpg',
+    coverImage: '/images/swimming.jpg',
+    images: ['/images/swimming.jpg', '/images/about-team.jpg'],
     category: 'tournaments',
     categoryLabel: 'بطولات ومسابقات',
     categoryLabelEn: 'Tournaments',
@@ -43,6 +49,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'عروض قتالية متميزة واجتياز أبطالنا لاختبارات الترقية للأحزمة المتقدمة بنجاح.',
     descriptionEn: 'Exceptional kata demonstrations and successful belt graduations for our young martial artists.',
     image: '/images/karate.jpg',
+    coverImage: '/images/karate.jpg',
+    images: ['/images/karate.jpg', '/images/kickboxing.jpg', '/images/about-team.jpg'],
     category: 'tournaments',
     categoryLabel: 'بطولات ومسابقات',
     categoryLabelEn: 'Tournaments',
@@ -55,6 +63,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'أجواء تنافسية وتصويبات حاسمة في صالات كرة السلة المجهزة بأحدث المعايير.',
     descriptionEn: 'Competitive spirit and decisive shots in our indoor air-conditioned basketball courts.',
     image: '/images/basketball.jpg',
+    coverImage: '/images/basketball.jpg',
+    images: ['/images/basketball.jpg', '/images/about-team.jpg'],
     category: 'tournaments',
     categoryLabel: 'بطولات ومسابقات',
     categoryLabelEn: 'Tournaments',
@@ -67,6 +77,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'تكريم الأطفال المتفوقين بحضور أولياء الأمور والمدربين في أجواء احتفالية رائعة.',
     descriptionEn: 'Honoring top achievers alongside parents and certified coaching staff in a festive atmosphere.',
     image: '/images/about-team.jpg',
+    coverImage: '/images/about-team.jpg',
+    images: ['/images/about-team.jpg', '/images/hero-bg.jpg', '/images/football.jpg'],
     category: 'events',
     categoryLabel: 'فعاليات واحتفالات',
     categoryLabelEn: 'Events',
@@ -79,6 +91,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'أنشطة ترفيهية ومسابقات عائلية تجمع الآباء والأبناء في بيئة رياضية محفزة.',
     descriptionEn: 'Exciting sports activities and family challenges bringing parents and kids together.',
     image: '/images/hero-bg.jpg',
+    coverImage: '/images/hero-bg.jpg',
+    images: ['/images/hero-bg.jpg', '/images/about-team.jpg', '/images/roller-skating.jpg'],
     category: 'events',
     categoryLabel: 'فعاليات واحتفالات',
     categoryLabelEn: 'Events',
@@ -91,6 +105,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'تمارين رفع اللياقة، الدفاع عن النفس، وزيادة التركيز والسرعة تحت إشراف متخصص.',
     descriptionEn: 'High-energy fitness drills, self-defense basics, and speed training with expert supervision.',
     image: '/images/kickboxing.jpg',
+    coverImage: '/images/kickboxing.jpg',
+    images: ['/images/kickboxing.jpg', '/images/karate.jpg'],
     category: 'training',
     categoryLabel: 'حصص وتدريبات',
     categoryLabelEn: 'Training',
@@ -103,6 +119,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'تطوير المرونة الحركية، القوة البدنية، والتوافق العضلي العصبي للأولاد والبنات.',
     descriptionEn: 'Building motor agility, muscular strength, and graceful balance for boys and girls.',
     image: '/images/gymnastics.jpg',
+    coverImage: '/images/gymnastics.jpg',
+    images: ['/images/gymnastics.jpg', '/images/roller-skating.jpg'],
     category: 'training',
     categoryLabel: 'حصص وتدريبات',
     categoryLabelEn: 'Training',
@@ -115,6 +133,8 @@ export const galleryItems: GalleryItem[] = [
     description: 'تعليم أساسيات التوازن والتحكم في السكيت مع مسارات تدريبية آمنة وممتعة.',
     descriptionEn: 'Teaching core balance, speed control, and skating obstacle navigation in a safe indoor setting.',
     image: '/images/roller-skating.jpg',
+    coverImage: '/images/roller-skating.jpg',
+    images: ['/images/roller-skating.jpg', '/images/gymnastics.jpg'],
     category: 'training',
     categoryLabel: 'حصص وتدريبات',
     categoryLabelEn: 'Training',

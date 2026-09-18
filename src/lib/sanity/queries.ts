@@ -94,7 +94,9 @@ export const TESTIMONIALS_QUERY = `
 export const GALLERY_QUERY = `
   *[_type == "galleryImage" && isActive != false] | order(displayOrder asc, _createdAt desc){
     ...,
-    "imageUrl": image.asset->url
+    "coverImageUrl": coalesce(coverImage.asset->url, image.asset->url),
+    "imageUrl": coalesce(coverImage.asset->url, image.asset->url),
+    "imagesUrls": images[].asset->url
   }
 `;
 

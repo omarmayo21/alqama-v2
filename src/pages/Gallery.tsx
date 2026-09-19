@@ -333,129 +333,128 @@ const Gallery: React.FC = () => {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 animate-fade-in overflow-hidden select-none"
+          className="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 md:p-6 animate-fade-in select-none"
           onClick={handleClose}
         >
-          {/* Prominent Fixed Close Button */}
+          {/* Prominent Screen Corner Close Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleClose();
             }}
-            className={`fixed top-4 ${isRTL ? 'left-4' : 'right-4'} sm:top-6 ${isRTL ? 'sm:left-6' : 'sm:right-6'} z-[1050] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/80 hover:bg-[#D90429] text-white border border-white/30 backdrop-blur-md shadow-2xl transition-all duration-200 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95`}
+            className={`fixed top-3 ${isRTL ? 'left-3' : 'right-3'} sm:top-5 ${isRTL ? 'sm:left-5' : 'sm:right-5'} z-[1050] w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/80 hover:bg-[#D90429] text-white border border-white/30 backdrop-blur-md shadow-2xl transition-all duration-200 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95`}
             aria-label={t.galleryPage.closeLightbox}
             title={t.galleryPage.closeLightbox}
           >
-            <X size={22} className="sm:w-6 sm:h-6 text-white" />
+            <X size={20} className="text-white sm:w-5 sm:h-5" />
           </button>
 
-          {/* Top Bar: Counter & Album Title */}
+          {/* Centered Constrained Viewer Card */}
           <div
-            className="w-full flex items-center justify-between z-20 max-w-4xl mb-2 px-2 sm:px-0 flex-shrink-0"
+            className="relative w-full max-w-xl md:max-w-2xl bg-[#141B2D]/95 border border-white/15 rounded-3xl p-3.5 sm:p-5 shadow-2xl flex flex-col items-center justify-between gap-2.5 sm:gap-3 backdrop-blur-xl max-h-[90vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="text-white/90 font-bold text-xs sm:text-sm bg-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl backdrop-blur-sm tabular-nums flex items-center gap-1.5 sm:gap-2">
-                <ImageIcon size={14} className="text-[#FFC400] sm:w-4 sm:h-4" />
-                <span>{activePhotoIndex + 1}</span>
-                <span className="text-white/50">{t.galleryPage.imageCounter}</span>
-                <span>{activeAlbum.images.length}</span>
+            {/* Top Bar inside Viewer Card */}
+            <div className="w-full flex items-center justify-between z-20 flex-shrink-0 border-b border-white/10 pb-2.5">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <span className="inline-block bg-[#D90429] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md flex-shrink-0">
+                  {activeAlbum.categoryLabel}
+                </span>
+                <h4 className="text-white text-xs sm:text-sm font-bold truncate">
+                  {activeAlbum.title}
+                </h4>
               </div>
-              <span className="hidden sm:inline-block text-xs font-bold text-white/80 bg-white/5 px-3 py-2 rounded-xl truncate max-w-xs md:max-w-md">
-                {activeAlbum.title}
-              </span>
-            </div>
-          </div>
 
-          {/* Center Stage: Main Image + Nav Arrows */}
-          <div
-            className="relative w-full max-w-4xl flex-1 flex items-center justify-center my-1 px-8 sm:px-12 min-h-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Prev Button */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="text-white/80 font-bold text-[11px] sm:text-xs bg-white/10 px-2.5 py-1 rounded-lg tabular-nums flex items-center gap-1.5">
+                  <ImageIcon size={13} className="text-[#FFC400]" />
+                  <span>{activePhotoIndex + 1}</span>
+                  <span className="text-white/40">/</span>
+                  <span>{activeAlbum.images.length}</span>
+                </div>
+
+                <button
+                  onClick={handleClose}
+                  className="p-1.5 sm:p-2 rounded-xl bg-white/10 hover:bg-[#D90429] text-white transition-all duration-200 cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95"
+                  aria-label={t.galleryPage.closeLightbox}
+                  title={t.galleryPage.closeLightbox}
+                >
+                  <X size={18} className="text-white sm:w-5 sm:h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Center Stage: Main Constrained Image + Prev/Next Controls */}
+            <div className="relative w-full flex items-center justify-center px-8 sm:px-10 py-1 min-h-0 flex-1">
+              {/* Prev Button */}
+              {activeAlbum.images.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isRTL ? handleNextPhoto() : handlePrevPhoto();
+                  }}
+                  className={`absolute ${isRTL ? 'right-0 sm:right-1' : 'left-0 sm:left-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer`}
+                  aria-label={t.galleryPage.prevImage}
+                >
+                  {isRTL ? <ChevronRight size={18} className="sm:w-5 sm:h-5" /> : <ChevronLeft size={18} className="sm:w-5 sm:h-5" />}
+                </button>
+              )}
+
+              {/* Main Image Frame */}
+              <div className="relative max-h-[30vh] sm:max-h-[36vh] md:max-h-[40vh] w-full max-w-lg rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-black/60 flex items-center justify-center">
+                <img
+                  key={activePhotoIndex}
+                  src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
+                  alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
+                  className="max-h-[30vh] sm:max-h-[36vh] md:max-h-[40vh] max-w-full w-auto object-contain rounded-2xl animate-fade-in select-none"
+                />
+              </div>
+
+              {/* Next Button */}
+              {activeAlbum.images.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isRTL ? handlePrevPhoto() : handleNextPhoto();
+                  }}
+                  className={`absolute ${isRTL ? 'left-0 sm:left-1' : 'right-0 sm:right-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer`}
+                  aria-label={t.galleryPage.nextImage}
+                >
+                  {isRTL ? <ChevronLeft size={18} className="sm:w-5 sm:h-5" /> : <ChevronRight size={18} className="sm:w-5 sm:h-5" />}
+                </button>
+              )}
+            </div>
+
+            {/* Thumbnails Strip */}
             {activeAlbum.images.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  isRTL ? handleNextPhoto() : handlePrevPhoto();
-                }}
-                className={`absolute ${isRTL ? 'right-0 sm:right-2' : 'left-0 sm:left-2'} z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
-                aria-label={t.galleryPage.prevImage}
-              >
-                {isRTL ? <ChevronRight size={22} className="sm:w-6 sm:h-6" /> : <ChevronLeft size={22} className="sm:w-6 sm:h-6" />}
-              </button>
+              <div className="w-full max-w-md px-2 py-1 bg-black/40 rounded-xl border border-white/10 overflow-x-auto flex items-center justify-start sm:justify-center gap-1.5 z-20 scrollbar-thin max-h-14 flex-shrink-0">
+                {activeAlbum.images.map((imgUrl, thumbIdx) => {
+                  const isActiveThumb = thumbIdx === activePhotoIndex;
+                  return (
+                    <button
+                      key={`${imgUrl}-${thumbIdx}`}
+                      onClick={() => setActivePhotoIndex(thumbIdx)}
+                      className={`relative w-11 h-8 sm:w-13 sm:h-9 rounded-md overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
+                        isActiveThumb
+                          ? 'border-[#D90429] scale-105 shadow-md shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/60'
+                          : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/60'
+                      }`}
+                    >
+                      <img
+                        src={imgUrl}
+                        alt={`Thumbnail ${thumbIdx + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             )}
 
-            {/* Main Image Container */}
-            <div className="relative max-h-[44vh] sm:max-h-[48vh] md:max-h-[50vh] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/50 flex items-center justify-center">
-              <img
-                key={activePhotoIndex}
-                src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
-                alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
-                className="max-h-[44vh] sm:max-h-[48vh] md:max-h-[50vh] max-w-full w-auto object-contain rounded-2xl animate-fade-in select-none"
-              />
-            </div>
-
-            {/* Next Button */}
-            {activeAlbum.images.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  isRTL ? handlePrevPhoto() : handleNextPhoto();
-                }}
-                className={`absolute ${isRTL ? 'left-0 sm:left-2' : 'right-0 sm:right-2'} z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
-                aria-label={t.galleryPage.nextImage}
-              >
-                {isRTL ? <ChevronLeft size={22} className="sm:w-6 sm:h-6" /> : <ChevronRight size={22} className="sm:w-6 sm:h-6" />}
-              </button>
-            )}
-          </div>
-
-          {/* Thumbnails Strip */}
-          {activeAlbum.images.length > 1 && (
-            <div
-              className="w-full max-w-2xl my-2 px-2.5 py-1.5 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 overflow-x-auto flex items-center justify-start sm:justify-center gap-2 z-20 scrollbar-thin max-h-16 flex-shrink-0"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {activeAlbum.images.map((imgUrl, thumbIdx) => {
-                const isActiveThumb = thumbIdx === activePhotoIndex;
-                return (
-                  <button
-                    key={`${imgUrl}-${thumbIdx}`}
-                    onClick={() => setActivePhotoIndex(thumbIdx)}
-                    className={`relative w-12 h-9 sm:w-14 sm:h-10 rounded-lg overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
-                      isActiveThumb 
-                        ? 'border-[#D90429] scale-105 shadow-md shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/50' 
-                        : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/60'
-                    }`}
-                  >
-                    <img 
-                      src={imgUrl} 
-                      alt={`Thumbnail ${thumbIdx + 1}`} 
-                      className="w-full h-full object-cover" 
-                      loading="lazy"
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Bottom Caption & Description */}
-          <div
-            className="w-full max-w-2xl text-center px-4 py-1.5 z-20 flex-shrink-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
-              <span className="inline-block bg-[#D90429] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md">
-                {activeAlbum.categoryLabel}
-              </span>
-              <h4 className="text-white text-xs sm:text-sm md:text-base font-black truncate max-w-md">
-                {activeAlbum.title}
-              </h4>
-            </div>
+            {/* Bottom Optional Description */}
             {activeAlbum.description && (
-              <p className="text-white/70 text-[11px] sm:text-xs font-medium line-clamp-1">
+              <p className="text-white/70 text-[11px] sm:text-xs font-medium text-center line-clamp-1 flex-shrink-0 px-2">
                 {activeAlbum.description}
               </p>
             )}

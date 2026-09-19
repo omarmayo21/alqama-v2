@@ -1,13 +1,12 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Trophy, 
   Calendar, 
   Dumbbell, 
   Layers, 
-  Maximize2, 
-  X, 
-  ChevronLeft, 
-  ChevronRight, 
+  ArrowRight,
+  ArrowLeft,
   MessageCircle, 
   Sparkles, 
   Image as ImageIcon 
@@ -24,6 +23,7 @@ type CategoryFilter = 'all' | 'tournaments' | 'events' | 'training' | 'other';
 
 interface ResolvedAlbum {
   id: string;
+  slug: string;
   title: string;
   description?: string;
   coverImage: string;
@@ -37,11 +37,10 @@ const Gallery: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const { galleryImages: sanityGallery, t: cmsT } = useSanityData();
   const t = translations[language];
+  const basePath = language === 'en' ? '/en' : '';
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
-  // State for active album and active photo index inside that album
-  const [selectedAlbumIndex, setSelectedAlbumIndex] = useState<number | null>(null);
-  const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
 
   // 1. Resolve Dynamic Gallery Albums Data (Sanity Primary -> Static Fallback)
   const allAlbums: ResolvedAlbum[] = useMemo(() => {
@@ -65,8 +64,11 @@ const Gallery: React.FC = () => {
           albumImages = [cover, ...albumImages];
         }
 
+        const resolvedSlug = (doc as any).slug || fallback?.slug || doc._id || `album-${idx}`;
+
         return {
           id: doc._id || `album-${idx}`,
+          slug: resolvedSlug,
           title: cmsT(doc.title, language === 'en' ? (doc.titleEn || fallback?.titleEn || fallback?.title) : (doc.titleAr || fallback?.title)),
           description: cmsT(doc.description, language === 'en' ? (doc.descriptionEn || '') : (doc.descriptionAr || '')),
           coverImage: cover,
@@ -95,6 +97,7 @@ const Gallery: React.FC = () => {
 
       return {
         id: item.id,
+        slug: item.slug || item.id,
         title: language === 'en' ? (item.titleEn || item.title) : item.title,
         description: language === 'en' ? (item.descriptionEn || '') : (item.description || ''),
         coverImage: cover,
@@ -152,54 +155,6 @@ const Gallery: React.FC = () => {
     },
   ].filter((c) => c.id === 'all' || c.count > 0), [allAlbums, t.galleryPage]);
 
-  const activeAlbum = selectedAlbumIndex !== null ? filteredAlbums[selectedAlbumIndex] : null;
-
-  const handleOpenAlbum = (albumIdx: number) => {
-    setSelectedAlbumIndex(albumIdx);
-    setActivePhotoIndex(0);
-  };
-
-  const handleClose = useCallback(() => {
-    setSelectedAlbumIndex(null);
-    setActivePhotoIndex(0);
-  }, []);
-
-  // Navigation between photos inside the active album
-  const handlePrevPhoto = useCallback(() => {
-    if (!activeAlbum || activeAlbum.images.length <= 1) return;
-    setActivePhotoIndex((prev) => (prev === 0 ? activeAlbum.images.length - 1 : prev - 1));
-  }, [activeAlbum]);
-
-  const handleNextPhoto = useCallback(() => {
-    if (!activeAlbum || activeAlbum.images.length <= 1) return;
-    setActivePhotoIndex((prev) => (prev === activeAlbum.images.length - 1 ? 0 : prev + 1));
-  }, [activeAlbum]);
-
-  // Keyboard navigation for Lightbox
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (selectedAlbumIndex === null) return;
-      if (e.key === 'Escape') handleClose();
-      if (e.key === 'ArrowRight') isRTL ? handlePrevPhoto() : handleNextPhoto();
-      if (e.key === 'ArrowLeft') isRTL ? handleNextPhoto() : handlePrevPhoto();
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedAlbumIndex, isRTL, handlePrevPhoto, handleNextPhoto, handleClose]);
-
-  // Prevent background scrolling when Lightbox is open
-  useEffect(() => {
-    if (selectedAlbumIndex !== null) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [selectedAlbumIndex]);
-
   return (
     <div>
       {/* Page Header */}
@@ -222,10 +177,7 @@ const Gallery: React.FC = () => {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => {
-                      setActiveCategory(cat.id);
-                      setSelectedAlbumIndex(null);
-                    }}
+                    onClick={() => setActiveCategory(cat.id)}
                     className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-xs md:text-sm transition-all duration-300 cursor-pointer shadow-sm ${
                       isActive
                         ? 'bg-[#D90429] text-white shadow-lg shadow-red-500/20 scale-105'
@@ -250,71 +202,78 @@ const Gallery: React.FC = () => {
           {/* Albums Grid */}
           {filteredAlbums.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {filteredAlbums.map((album, idx) => (
-                <ScrollReveal key={album.id} delay={idx * 50}>
-                  <div
-                    onClick={() => handleOpenAlbum(idx)}
-                    className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 cursor-pointer flex flex-col h-full"
-                  >
-                    {/* Cover Image Box */}
-                    <div className="relative h-64 md:h-72 overflow-hidden bg-[#18213F]">
-                      <img
-                        src={album.coverImage}
-                        alt={album.title}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                        loading="lazy"
-                      />
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#18213F]/90 via-[#18213F]/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
+              {filteredAlbums.map((album, idx) => {
+                const albumPath = `${basePath}/gallery/${encodeURIComponent(album.slug)}`;
+                const photoCountText = language === 'en'
+                  ? `${album.images.length} ${album.images.length === 1 ? 'Photo' : 'Photos'}`
+                  : `${album.images.length} ${album.images.length === 1 ? 'صورة' : 'صور'}`;
 
-                      {/* Top Badges */}
-                      <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} flex items-center gap-2`}>
-                        <span className="inline-flex items-center gap-1.5 bg-[#18213F]/85 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
-                          <Sparkles size={12} className="text-[#FFC400]" />
-                          <span>{album.categoryLabel}</span>
-                        </span>
-                      </div>
+                return (
+                  <ScrollReveal key={album.id} delay={idx * 50}>
+                    <Link
+                      to={albumPath}
+                      className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 cursor-pointer flex flex-col h-full"
+                    >
+                      {/* Cover Image Box */}
+                      <div className="relative h-64 md:h-72 overflow-hidden bg-[#18213F]">
+                        <img
+                          src={album.coverImage}
+                          alt={album.title}
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#18213F]/90 via-[#18213F]/25 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
 
-                      {/* Photo Count Badge */}
-                      <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'}`}>
-                        <span className="inline-flex items-center gap-1.5 bg-black/60 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-md tabular-nums">
-                          <ImageIcon size={13} className="text-white" />
-                          <span>
-                            {language === 'en' 
-                              ? `${album.images.length} ${album.images.length === 1 ? 'Photo' : 'Photos'}`
-                              : `${album.images.length} ${album.images.length === 1 ? 'صورة' : 'صور'}`}
+                        {/* Top Badges */}
+                        <div className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} flex items-center gap-2`}>
+                          <span className="inline-flex items-center gap-1.5 bg-[#18213F]/85 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-3 py-1.5 rounded-xl shadow-md">
+                            <Sparkles size={12} className="text-[#FFC400]" />
+                            <span>{album.categoryLabel}</span>
                           </span>
-                        </span>
-                      </div>
+                        </div>
 
-                      {/* Zoom Icon Action */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-75 group-hover:scale-100">
-                        <div className="w-14 h-14 rounded-2xl bg-[#D90429] text-white flex items-center justify-center shadow-xl shadow-red-950/40">
-                          <Maximize2 size={24} />
+                        {/* Photo Count Badge */}
+                        <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'}`}>
+                          <span className="inline-flex items-center gap-1.5 bg-black/60 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-md tabular-nums">
+                            <ImageIcon size={13} className="text-[#FFC400]" />
+                            <span>{photoCountText}</span>
+                          </span>
+                        </div>
+
+                        {/* Hover Overlay Button */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-90 group-hover:scale-100">
+                          <span className="inline-flex items-center gap-2 bg-[#D90429] text-white px-5 py-2.5 rounded-2xl font-black text-sm shadow-xl shadow-red-950/40">
+                            <span>{t.galleryPage.openAlbum}</span>
+                            <ArrowIcon size={16} />
+                          </span>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Album Details */}
-                    <div className="p-6 flex flex-col flex-1 justify-between bg-white">
-                      <div>
-                        <h3 className="text-lg md:text-xl font-black text-[#18213F] mb-2 leading-tight group-hover:text-[#D90429] transition-colors">
-                          {album.title}
-                        </h3>
-                        {album.description && (
-                          <p className="text-[#5A6E85] text-sm leading-relaxed font-medium line-clamp-2">
-                            {album.description}
-                          </p>
-                        )}
+                      {/* Album Details */}
+                      <div className="p-6 flex flex-col flex-1 justify-between bg-white">
+                        <div>
+                          <h3 className="text-lg md:text-xl font-black text-[#18213F] mb-2 leading-tight group-hover:text-[#D90429] transition-colors">
+                            {album.title}
+                          </h3>
+                          {album.description && (
+                            <p className="text-[#5A6E85] text-sm leading-relaxed font-medium line-clamp-2">
+                              {album.description}
+                            </p>
+                          )}
+                        </div>
+                        <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#D90429]">
+                          <span className="inline-flex items-center gap-1.5 group-hover:underline">
+                            <span>{t.galleryPage.openAlbum}</span>
+                            <ArrowIcon size={14} className={`transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+                          </span>
+                          <span className="text-[#5A6E85] font-semibold tabular-nums">{photoCountText}</span>
+                        </div>
                       </div>
-                      <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#D90429]">
-                        <span>{language === 'en' ? 'Open Album' : 'عرض الألبوم'}</span>
-                        <span>{language === 'en' ? `${album.images.length} Images` : `${album.images.length} صور`}</span>
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
+                    </Link>
+                  </ScrollReveal>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 max-w-lg mx-auto p-8 shadow-sm">
@@ -327,137 +286,6 @@ const Gallery: React.FC = () => {
           )}
         </div>
       </section>
-
-      {/* Album Lightbox Modal */}
-      {selectedAlbumIndex !== null && activeAlbum && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-5 md:p-6 animate-fade-in select-none max-h-[100dvh] overflow-hidden"
-          onClick={handleClose}
-        >
-          {/* Top Bar: Counter, Title & Close Button */}
-          <div
-            className="w-full flex items-center justify-between z-20 max-w-5xl mb-2 px-2 flex-shrink-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className="text-white/90 font-bold text-xs sm:text-sm bg-white/10 px-3 py-1.5 rounded-xl backdrop-blur-sm tabular-nums flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                <ImageIcon size={14} className="text-[#FFC400] sm:w-4 sm:h-4" />
-                <span>{activePhotoIndex + 1}</span>
-                <span className="text-white/50">{t.galleryPage.imageCounter}</span>
-                <span>{activeAlbum.images.length}</span>
-              </div>
-              <span className="inline-block text-xs font-bold text-white/80 bg-white/5 px-3 py-1.5 rounded-xl truncate max-w-[180px] sm:max-w-md">
-                {activeAlbum.title}
-              </span>
-            </div>
-
-            <button
-              onClick={handleClose}
-              className="p-2 sm:p-2.5 rounded-xl bg-white/10 hover:bg-[#D90429] text-white transition-all duration-200 cursor-pointer backdrop-blur-sm flex items-center justify-center flex-shrink-0 hover:scale-105 active:scale-95"
-              aria-label={t.galleryPage.closeLightbox}
-              title={t.galleryPage.closeLightbox}
-            >
-              <X size={20} className="text-white sm:w-5 sm:h-5" />
-            </button>
-          </div>
-
-          {/* Center Stage: Fully Flexible Image Viewport with Prev/Next Controls */}
-          <div
-            className="relative w-full max-w-5xl flex-1 flex items-center justify-center min-h-0 px-10 sm:px-14 my-auto overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Prev Button */}
-            {activeAlbum.images.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  isRTL ? handleNextPhoto() : handlePrevPhoto();
-                }}
-                className={`absolute ${isRTL ? 'right-0 sm:right-1' : 'left-0 sm:left-1'} z-30 p-2.5 sm:p-3 rounded-full bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl cursor-pointer flex items-center justify-center`}
-                aria-label={t.galleryPage.prevImage}
-              >
-                {isRTL ? <ChevronRight size={20} className="sm:w-6 sm:h-6" /> : <ChevronLeft size={20} className="sm:w-6 sm:h-6" />}
-              </button>
-            )}
-
-            {/* Constrained Image Frame */}
-            <div className="relative flex items-center justify-center max-w-full max-h-full min-h-0 min-w-0">
-              <img
-                key={activePhotoIndex}
-                src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
-                alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
-                className="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl animate-fade-in select-none"
-              />
-            </div>
-
-            {/* Next Button */}
-            {activeAlbum.images.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  isRTL ? handlePrevPhoto() : handleNextPhoto();
-                }}
-                className={`absolute ${isRTL ? 'left-0 sm:left-1' : 'right-0 sm:right-1'} z-30 p-2.5 sm:p-3 rounded-full bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl cursor-pointer flex items-center justify-center`}
-                aria-label={t.galleryPage.nextImage}
-              >
-                {isRTL ? <ChevronLeft size={20} className="sm:w-6 sm:h-6" /> : <ChevronRight size={20} className="sm:w-6 sm:h-6" />}
-              </button>
-            )}
-          </div>
-
-          {/* Thumbnails Strip */}
-          {activeAlbum.images.length > 1 && (
-            <div
-              className="w-full max-w-2xl my-2 px-3 py-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 overflow-x-auto flex items-center justify-start sm:justify-center gap-2 z-20 scrollbar-thin max-h-16 flex-shrink-0"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {activeAlbum.images.map((imgUrl, thumbIdx) => {
-                const isActiveThumb = thumbIdx === activePhotoIndex;
-                return (
-                  <button
-                    key={`${imgUrl}-${thumbIdx}`}
-                    onClick={() => setActivePhotoIndex(thumbIdx)}
-                    className={`relative w-12 h-9 sm:w-14 sm:h-10 rounded-xl overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
-                      isActiveThumb
-                        ? 'border-[#D90429] scale-105 shadow-md shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/60'
-                        : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/60'
-                    }`}
-                  >
-                    <img
-                      src={imgUrl}
-                      alt={`Thumbnail ${thumbIdx + 1}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Bottom Caption & Description */}
-          <div
-            className="w-full max-w-2xl text-center bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 z-20 flex-shrink-0"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-center gap-2 mb-0.5 flex-wrap">
-              <span className="inline-block bg-[#D90429] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md">
-                {activeAlbum.categoryLabel}
-              </span>
-              <h4 className="text-white text-xs sm:text-sm font-bold truncate max-w-md">
-                {activeAlbum.title}
-              </h4>
-            </div>
-            {activeAlbum.description && (
-              <p className="text-white/70 text-[11px] sm:text-xs font-medium text-center line-clamp-1">
-                {activeAlbum.description}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* CTA Bottom Banner */}
       <section className="py-16 bg-[#18213F] text-white relative overflow-hidden">

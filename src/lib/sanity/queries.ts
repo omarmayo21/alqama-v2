@@ -95,6 +95,7 @@ export const TESTIMONIALS_QUERY = `
 export const GALLERY_QUERY = `
   *[_type == "galleryImage" && isActive != false] | order(displayOrder asc, _createdAt desc){
     ...,
+    "slug": coalesce(slug.current, slug, _id),
     "coverImageUrl": coalesce(coverImage.asset->url, image.asset->url),
     "imageUrl": coalesce(coverImage.asset->url, image.asset->url),
     "imagesUrls": images[].asset->url

@@ -8,6 +8,7 @@ import Sports from './pages/Sports';
 import SportDetail from './pages/SportDetail';
 import Offers from './pages/Offers';
 import Gallery from './pages/Gallery';
+import GalleryAlbum from './pages/GalleryAlbum';
 import Blog from './pages/Blog';
 import Article from './pages/Article';
 import Privacy from './pages/Privacy';
@@ -70,6 +71,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/sports/:sportId" element={<Layout><SportDetail /></Layout>} />
         <Route path="/offers" element={<Layout><Offers /></Layout>} />
         <Route path="/gallery" element={<Layout><Gallery /></Layout>} />
+        <Route path="/gallery/:slug" element={<Layout><GalleryAlbum /></Layout>} />
         <Route path="/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/blog/:id" element={<Layout><Article /></Layout>} />
         <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
@@ -82,6 +84,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/en/sports/:sportId" element={<Layout><SportDetail /></Layout>} />
         <Route path="/en/offers" element={<Layout><Offers /></Layout>} />
         <Route path="/en/gallery" element={<Layout><Gallery /></Layout>} />
+        <Route path="/en/gallery/:slug" element={<Layout><GalleryAlbum /></Layout>} />
         <Route path="/en/blog" element={<Layout><Blog /></Layout>} />
         <Route path="/en/blog/:id" element={<Layout><Article /></Layout>} />
         <Route path="/en/privacy" element={<Layout><Privacy /></Layout>} />

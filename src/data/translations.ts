@@ -166,6 +166,10 @@ export interface TranslationSchema {
     nextImage: string;
     prevImage: string;
     imageCounter: string;
+    backToGallery: string;
+    openAlbum: string;
+    photosLabel: string;
+    photoLabel: string;
   };
   common: {
     whatsappTooltip: string;
@@ -365,6 +369,10 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       nextImage: 'الصورة التالية',
       prevImage: 'الصورة السابقة',
       imageCounter: 'من',
+      backToGallery: 'العودة إلى المعرض',
+      openAlbum: 'عرض الألبوم',
+      photosLabel: 'صور',
+      photoLabel: 'صورة',
     },
     common: {
       whatsappTooltip: 'تواصل عبر واتساب',
@@ -562,6 +570,10 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       nextImage: 'Next Image',
       prevImage: 'Previous Image',
       imageCounter: 'of',
+      backToGallery: 'Back to Gallery',
+      openAlbum: 'Open Album',
+      photosLabel: 'Photos',
+      photoLabel: 'Photo',
     },
     common: {
       whatsappTooltip: 'Chat on WhatsApp',

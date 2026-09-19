@@ -13,6 +13,16 @@ export const galleryImage = defineType({
       description: 'مثال: بطولة كرة القدم الرمضانية / ALQIMA Ramadan Football Championship',
     }),
     defineField({
+      name: 'slug',
+      title: 'URL Slug / الرابط المخصص للألبوم',
+      type: 'slug',
+      options: {
+        source: (doc: any) => doc?.title?.en || doc?.title?.ar || doc?.title || 'album',
+        maxLength: 96,
+      },
+      description: 'الرابط المخصص للألبوم، مثال: junior-basketball-league',
+    }),
+    defineField({
       name: 'description',
       title: 'Description (Optional) / نبذة أو وصف مختصر عن الفعالية',
       type: 'localizedText',

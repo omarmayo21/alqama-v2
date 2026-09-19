@@ -1,5 +1,6 @@
 export interface GalleryItem {
   id: string;
+  slug: string;
   title: string;
   titleEn?: string;
   description?: string;
@@ -16,6 +17,7 @@ export interface GalleryItem {
 export const galleryItems: GalleryItem[] = [
   {
     id: 'g1',
+    slug: 'ramadan-football-championship',
     title: 'بطولة القمة الرمضانية لكرة القدم',
     titleEn: 'ALQIMA Ramadan Football Championship',
     description: 'مباريات حماسية وتتويج الفرق الفائزة بالكؤوس والميداليات في ملاعب الأكاديمية.',
@@ -30,6 +32,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g2',
+    slug: 'jeddah-youth-swimming',
     title: 'بطولة جدة للسباحة للفئات السنية',
     titleEn: 'Jeddah Youth Swimming Championship',
     description: 'تألق سباحي أكاديمية القمة وحصدهم مراكز متقدمة في المسافات المتنوعة.',
@@ -44,6 +47,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g3',
+    slug: 'karate-championship-graduation',
     title: 'اختبارات الأحزمة وبطولة الكاراتيه السنوية',
     titleEn: 'Annual Karate Championship & Belt Graduation',
     description: 'عروض قتالية متميزة واجتياز أبطالنا لاختبارات الترقية للأحزمة المتقدمة بنجاح.',
@@ -58,6 +62,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g4',
+    slug: 'junior-basketball-league',
     title: 'دوري كرة السلة للصغار',
     titleEn: 'Junior Basketball League Matches',
     description: 'أجواء تنافسية وتصويبات حاسمة في صالات كرة السلة المجهزة بأحدث المعايير.',
@@ -72,6 +77,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g5',
+    slug: 'end-of-season-champions',
     title: 'حفل تكريم أبطال الموسم واليوم المفتوح',
     titleEn: 'End of Season Champions Celebration & Open Day',
     description: 'تكريم الأطفال المتفوقين بحضور أولياء الأمور والمدربين في أجواء احتفالية رائعة.',
@@ -86,6 +92,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g6',
+    slug: 'family-sports-day',
     title: 'اليوم الرياضي العائلي المفتوح',
     titleEn: 'ALQIMA Family Fun & Sports Day',
     description: 'أنشطة ترفيهية ومسابقات عائلية تجمع الآباء والأبناء في بيئة رياضية محفزة.',
@@ -100,6 +107,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g7',
+    slug: 'kickboxing-fitness-sessions',
     title: 'تدريبات الكيك بوكسينغ وبناء اللياقة البدنية',
     titleEn: 'Kickboxing Fitness & Agility Sessions',
     description: 'تمارين رفع اللياقة، الدفاع عن النفس، وزيادة التركيز والسرعة تحت إشراف متخصص.',
@@ -114,6 +122,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g8',
+    slug: 'gymnastics-flexibility-classes',
     title: 'حصص الجمباز وتطوير المرونة والتوازن',
     titleEn: 'Gymnastics Flexibility & Core Balance Classes',
     description: 'تطوير المرونة الحركية، القوة البدنية، والتوافق العضلي العصبي للأولاد والبنات.',
@@ -128,6 +137,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 'g9',
+    slug: 'roller-skating-challenges',
     title: 'تدريبات السكيتنج وتحديات الرشاقة والسرعة',
     titleEn: 'Roller Skating Agility & Speed Challenges',
     description: 'تعليم أساسيات التوازن والتحكم في السكيت مع مسارات تدريبية آمنة وممتعة.',

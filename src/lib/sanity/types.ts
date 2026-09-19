@@ -422,6 +422,7 @@ export interface SanityTestimonial {
 export interface SanityGalleryImage {
   _id: string;
   _type: 'galleryImage';
+  slug?: string;
   title?: SanityLocalized;
   titleAr?: string;
   titleEn?: string;

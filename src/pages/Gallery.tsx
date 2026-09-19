@@ -351,11 +351,11 @@ const Gallery: React.FC = () => {
 
           {/* Centered Constrained Viewer Card */}
           <div
-            className="relative w-full max-w-xl md:max-w-2xl bg-[#141B2D]/95 border border-white/15 rounded-3xl p-3.5 sm:p-5 shadow-2xl flex flex-col items-center justify-between gap-2.5 sm:gap-3 backdrop-blur-xl max-h-[90vh] overflow-hidden"
+            className="relative w-full max-w-2xl lg:max-w-3xl h-[85vh] max-h-[85vh] sm:h-[88vh] sm:max-h-[88vh] bg-[#141B2D]/95 border border-white/15 rounded-3xl p-3.5 sm:p-5 shadow-2xl flex flex-col items-center justify-between gap-2 sm:gap-3 backdrop-blur-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Bar inside Viewer Card */}
-            <div className="w-full flex items-center justify-between z-20 flex-shrink-0 border-b border-white/10 pb-2.5">
+            <div className="w-full flex items-center justify-between z-20 flex-shrink-0 border-b border-white/10 pb-2 sm:pb-2.5">
               <div className="flex items-center gap-2 min-w-0 pr-2">
                 <span className="inline-block bg-[#D90429] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md flex-shrink-0">
                   {activeAlbum.categoryLabel}
@@ -384,8 +384,8 @@ const Gallery: React.FC = () => {
               </div>
             </div>
 
-            {/* Center Stage: Main Constrained Image + Prev/Next Controls */}
-            <div className="relative w-full flex items-center justify-center px-8 sm:px-10 py-1 min-h-0 flex-1">
+            {/* Center Stage: Main Flexible Constrained Image Viewport + Prev/Next Controls */}
+            <div className="relative w-full flex-1 min-h-0 min-w-0 flex items-center justify-center px-10 sm:px-14 py-1 overflow-hidden">
               {/* Prev Button */}
               {activeAlbum.images.length > 1 && (
                 <button
@@ -393,20 +393,21 @@ const Gallery: React.FC = () => {
                     e.stopPropagation();
                     isRTL ? handleNextPhoto() : handlePrevPhoto();
                   }}
-                  className={`absolute ${isRTL ? 'right-0 sm:right-1' : 'left-0 sm:left-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer`}
+                  className={`absolute ${isRTL ? 'right-0 sm:right-1' : 'left-0 sm:left-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer flex items-center justify-center`}
                   aria-label={t.galleryPage.prevImage}
                 >
                   {isRTL ? <ChevronRight size={18} className="sm:w-5 sm:h-5" /> : <ChevronLeft size={18} className="sm:w-5 sm:h-5" />}
                 </button>
               )}
 
-              {/* Main Image Frame */}
-              <div className="relative max-h-[30vh] sm:max-h-[36vh] md:max-h-[40vh] w-full max-w-lg rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-black/60 flex items-center justify-center">
+              {/* Main Image Viewport Frame */}
+              <div className="relative w-full h-full min-h-0 min-w-0 rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-black/60 flex items-center justify-center p-1 sm:p-2">
                 <img
                   key={activePhotoIndex}
                   src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
                   alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
-                  className="max-h-[30vh] sm:max-h-[36vh] md:max-h-[40vh] max-w-full w-auto object-contain rounded-2xl animate-fade-in select-none"
+                  className="w-auto h-auto max-w-full max-h-full object-contain rounded-xl animate-fade-in select-none"
+                  style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }}
                 />
               </div>
 
@@ -417,7 +418,7 @@ const Gallery: React.FC = () => {
                     e.stopPropagation();
                     isRTL ? handlePrevPhoto() : handleNextPhoto();
                   }}
-                  className={`absolute ${isRTL ? 'left-0 sm:left-1' : 'right-0 sm:right-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer`}
+                  className={`absolute ${isRTL ? 'left-0 sm:left-1' : 'right-0 sm:right-1'} z-30 p-2 sm:p-2.5 rounded-full bg-black/70 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg cursor-pointer flex items-center justify-center`}
                   aria-label={t.galleryPage.nextImage}
                 >
                   {isRTL ? <ChevronLeft size={18} className="sm:w-5 sm:h-5" /> : <ChevronRight size={18} className="sm:w-5 sm:h-5" />}

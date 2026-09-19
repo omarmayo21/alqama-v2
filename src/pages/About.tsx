@@ -117,7 +117,7 @@ const About: React.FC = () => {
               <div className="relative group">
                 <div className="overflow-hidden rounded-3xl shadow-2xl">
                   <img
-                    src="/images/about-team.jpg"
+                    src={aboutPage?.teamImageUrl || aboutPage?.storyImageUrl || aboutPage?.imageUrl || '/images/about-team.jpg'}
                     alt={language === 'en' ? 'ALQIMA Coaching Team' : 'فريق أكاديمية القمة'}
                     className="w-full h-[520px] object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"

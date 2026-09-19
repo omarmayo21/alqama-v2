@@ -333,70 +333,80 @@ const Gallery: React.FC = () => {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 md:p-6 animate-fade-in overflow-y-auto"
+          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 animate-fade-in overflow-hidden select-none"
           onClick={handleClose}
         >
-          {/* Top Bar: Counter & Close */}
+          {/* Prominent Fixed Close Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClose();
+            }}
+            className={`fixed top-4 ${isRTL ? 'left-4' : 'right-4'} sm:top-6 ${isRTL ? 'sm:left-6' : 'sm:right-6'} z-[1050] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/80 hover:bg-[#D90429] text-white border border-white/30 backdrop-blur-md shadow-2xl transition-all duration-200 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95`}
+            aria-label={t.galleryPage.closeLightbox}
+            title={t.galleryPage.closeLightbox}
+          >
+            <X size={22} className="sm:w-6 sm:h-6 text-white" />
+          </button>
+
+          {/* Top Bar: Counter & Album Title */}
           <div
-            className="w-full flex items-center justify-between z-20 max-w-6xl mb-2"
+            className="w-full flex items-center justify-between z-20 max-w-4xl mb-2 px-2 sm:px-0 flex-shrink-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3">
-              <div className="text-white/90 font-bold text-sm bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm tabular-nums flex items-center gap-2">
-                <ImageIcon size={16} className="text-[#FFC400]" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="text-white/90 font-bold text-xs sm:text-sm bg-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl backdrop-blur-sm tabular-nums flex items-center gap-1.5 sm:gap-2">
+                <ImageIcon size={14} className="text-[#FFC400] sm:w-4 sm:h-4" />
                 <span>{activePhotoIndex + 1}</span>
                 <span className="text-white/50">{t.galleryPage.imageCounter}</span>
                 <span>{activeAlbum.images.length}</span>
               </div>
-              <span className="hidden sm:inline-block text-xs font-bold text-white/70 bg-white/5 px-3 py-2 rounded-xl">
+              <span className="hidden sm:inline-block text-xs font-bold text-white/80 bg-white/5 px-3 py-2 rounded-xl truncate max-w-xs md:max-w-md">
                 {activeAlbum.title}
               </span>
             </div>
-
-            <button
-              onClick={handleClose}
-              className="p-3 rounded-2xl bg-white/10 hover:bg-[#D90429] text-white transition-all duration-200 cursor-pointer backdrop-blur-sm"
-              aria-label={t.galleryPage.closeLightbox}
-              title={t.galleryPage.closeLightbox}
-            >
-              <X size={24} />
-            </button>
           </div>
 
-          {/* Center Stage: Large Main Image + Nav Arrows */}
+          {/* Center Stage: Main Image + Nav Arrows */}
           <div
-            className="relative w-full max-w-5xl flex-1 flex items-center justify-center my-2"
+            className="relative w-full max-w-4xl flex-1 flex items-center justify-center my-1 px-8 sm:px-12 min-h-0"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Prev Button */}
             {activeAlbum.images.length > 1 && (
               <button
-                onClick={isRTL ? handleNextPhoto : handlePrevPhoto}
-                className={`absolute ${isRTL ? 'right-2 md:-right-6' : 'left-2 md:-left-6'} z-30 p-3.5 rounded-2xl bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  isRTL ? handleNextPhoto() : handlePrevPhoto();
+                }}
+                className={`absolute ${isRTL ? 'right-0 sm:right-2' : 'left-0 sm:left-2'} z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
                 aria-label={t.galleryPage.prevImage}
               >
-                {isRTL ? <ChevronRight size={26} /> : <ChevronLeft size={26} />}
+                {isRTL ? <ChevronRight size={22} className="sm:w-6 sm:h-6" /> : <ChevronLeft size={22} className="sm:w-6 sm:h-6" />}
               </button>
             )}
 
-            {/* Main Image */}
-            <div className="relative max-h-[55vh] md:max-h-[60vh] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/40 flex items-center justify-center">
+            {/* Main Image Container */}
+            <div className="relative max-h-[44vh] sm:max-h-[48vh] md:max-h-[50vh] max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black/50 flex items-center justify-center">
               <img
                 key={activePhotoIndex}
                 src={activeAlbum.images[activePhotoIndex] || activeAlbum.coverImage}
                 alt={`${activeAlbum.title} - ${activePhotoIndex + 1}`}
-                className="max-h-[55vh] md:max-h-[60vh] w-auto object-contain rounded-2xl animate-fade-in select-none"
+                className="max-h-[44vh] sm:max-h-[48vh] md:max-h-[50vh] max-w-full w-auto object-contain rounded-2xl animate-fade-in select-none"
               />
             </div>
 
             {/* Next Button */}
             {activeAlbum.images.length > 1 && (
               <button
-                onClick={isRTL ? handlePrevPhoto : handleNextPhoto}
-                className={`absolute ${isRTL ? 'left-2 md:-left-6' : 'right-2 md:-right-6'} z-30 p-3.5 rounded-2xl bg-white/15 hover:bg-[#D90429] text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  isRTL ? handlePrevPhoto() : handleNextPhoto();
+                }}
+                className={`absolute ${isRTL ? 'left-0 sm:left-2' : 'right-0 sm:right-2'} z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-[#D90429] text-white border border-white/20 backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-xl cursor-pointer`}
                 aria-label={t.galleryPage.nextImage}
               >
-                {isRTL ? <ChevronLeft size={26} /> : <ChevronRight size={26} />}
+                {isRTL ? <ChevronLeft size={22} className="sm:w-6 sm:h-6" /> : <ChevronRight size={22} className="sm:w-6 sm:h-6" />}
               </button>
             )}
           </div>
@@ -404,7 +414,7 @@ const Gallery: React.FC = () => {
           {/* Thumbnails Strip */}
           {activeAlbum.images.length > 1 && (
             <div
-              className="w-full max-w-4xl my-2 px-2 py-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 overflow-x-auto flex items-center justify-center gap-2.5 z-20 scrollbar-thin"
+              className="w-full max-w-2xl my-2 px-2.5 py-1.5 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 overflow-x-auto flex items-center justify-start sm:justify-center gap-2 z-20 scrollbar-thin max-h-16 flex-shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
               {activeAlbum.images.map((imgUrl, thumbIdx) => {
@@ -413,10 +423,10 @@ const Gallery: React.FC = () => {
                   <button
                     key={`${imgUrl}-${thumbIdx}`}
                     onClick={() => setActivePhotoIndex(thumbIdx)}
-                    className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
+                    className={`relative w-12 h-9 sm:w-14 sm:h-10 rounded-lg overflow-hidden flex-shrink-0 transition-all duration-200 cursor-pointer border-2 ${
                       isActiveThumb 
-                        ? 'border-[#D90429] scale-105 shadow-lg shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/50' 
-                        : 'border-white/20 opacity-60 hover:opacity-100 hover:border-white/60'
+                        ? 'border-[#D90429] scale-105 shadow-md shadow-red-500/40 opacity-100 ring-2 ring-[#D90429]/50' 
+                        : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/60'
                     }`}
                   >
                     <img 
@@ -433,17 +443,19 @@ const Gallery: React.FC = () => {
 
           {/* Bottom Caption & Description */}
           <div
-            className="w-full max-w-3xl text-center bg-white/10 backdrop-blur-md p-4 md:p-5 rounded-2xl border border-white/10 z-20 mt-1"
+            className="w-full max-w-2xl text-center px-4 py-1.5 z-20 flex-shrink-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="inline-block bg-[#D90429] text-white text-xs font-black px-3 py-1 rounded-lg mb-2">
-              {activeAlbum.categoryLabel}
-            </span>
-            <h4 className="text-white text-base md:text-lg font-black mb-1">
-              {activeAlbum.title}
-            </h4>
+            <div className="flex items-center justify-center gap-2 mb-1 flex-wrap">
+              <span className="inline-block bg-[#D90429] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md">
+                {activeAlbum.categoryLabel}
+              </span>
+              <h4 className="text-white text-xs sm:text-sm md:text-base font-black truncate max-w-md">
+                {activeAlbum.title}
+              </h4>
+            </div>
             {activeAlbum.description && (
-              <p className="text-white/80 text-xs md:text-sm font-medium leading-relaxed">
+              <p className="text-white/70 text-[11px] sm:text-xs font-medium line-clamp-1">
                 {activeAlbum.description}
               </p>
             )}

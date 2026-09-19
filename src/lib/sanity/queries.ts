@@ -24,8 +24,9 @@ export const HOMEPAGE_QUERY = `
 export const ABOUT_PAGE_QUERY = `
   *[_type == "aboutPage"][0]{
     ...,
-    "storyImageUrl": storyImage.asset->url,
-    "teamImageUrl": teamImage.asset->url,
+    "storyImageUrl": coalesce(storyImage.asset->url, image.asset->url),
+    "teamImageUrl": coalesce(teamImage.asset->url, storyImage.asset->url, image.asset->url),
+    "imageUrl": coalesce(image.asset->url, teamImage.asset->url, storyImage.asset->url),
     "seoOgImageUrl": seoOgImage.asset->url
   }
 `;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { CheckCircle, Clock, Users, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ShieldCheck, MessageCircle, Layers, CreditCard, HeartHandshake } from 'lucide-react';
+import { CheckCircle, Users, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, MessageCircle, Layers, CreditCard, HeartHandshake } from 'lucide-react';
 import { sports, sportsEn } from '../data/sports';
 import { scheduleItems } from '../data/schedule';
 import PageHeader from '../components/ui/PageHeader';

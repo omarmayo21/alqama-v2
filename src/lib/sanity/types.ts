@@ -208,6 +208,10 @@ export interface SanityAboutPage {
   storyImageUrl?: string;
   teamImage?: SanityImage;
   teamImageUrl?: string;
+  image?: SanityImage;
+  imageUrl?: string;
+  heroImage?: SanityImage;
+  heroImageUrl?: string;
   valuesTitle?: SanityLocalized;
   valuesHighlight?: SanityLocalized;
   valuesSubtitle?: SanityLocalized;
@@ -529,14 +533,21 @@ export interface SanityAnalyticsSettings {
 export interface SanityPaymentProviders {
   _id: string;
   _type: 'paymentProviders';
+  sectionTitle?: SanityLocalized;
+  sectionSubtitle?: SanityLocalized;
+  subtitle?: SanityLocalized;
   tabbyEnabled?: boolean;
+  tabbyTitle?: SanityLocalized;
   tabbyTitleAr?: string;
   tabbyTitleEn?: string;
+  tabbyDesc?: SanityLocalized;
   tabbyDescriptionAr?: string;
   tabbyDescriptionEn?: string;
   tamaraEnabled?: boolean;
+  tamaraTitle?: SanityLocalized;
   tamaraTitleAr?: string;
   tamaraTitleEn?: string;
+  tamaraDesc?: SanityLocalized;
   tamaraDescriptionAr?: string;
   tamaraDescriptionEn?: string;
   splitCount?: number;

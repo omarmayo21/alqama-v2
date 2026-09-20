@@ -16,6 +16,7 @@ import ScrollReveal from '../components/animation/ScrollReveal';
 import { galleryItems } from '../data/gallery';
 import { useLanguage } from '../context/LanguageContext';
 import { useSanityData } from '../context/SanityDataContext';
+import { getSanityImageUrl } from '../lib/sanity/image';
 import { translations } from '../data/translations';
 import { WHATSAPP_URL } from '../utils/constants';
 
@@ -35,7 +36,7 @@ interface ResolvedAlbum {
 
 const Gallery: React.FC = () => {
   const { language, isRTL } = useLanguage();
-  const { galleryImages: sanityGallery, t: cmsT } = useSanityData();
+  const { galleryImages: sanityGallery, isLoading, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
@@ -47,14 +48,13 @@ const Gallery: React.FC = () => {
     if (sanityGallery && sanityGallery.length > 0) {
       return sanityGallery.map((doc, idx) => {
         const cat = (doc.category as CategoryFilter) || 'other';
-        const fallback = galleryItems[idx] || galleryItems[0];
-        const cover = doc.coverImageUrl || doc.imageUrl || fallback?.coverImage || fallback?.image || '/images/hero-bg.jpg';
+        const cover = doc.coverImageUrl || doc.imageUrl || getSanityImageUrl(doc.coverImage) || getSanityImageUrl(doc.image) || '/images/hero-bg.jpg';
         
         let albumImages: string[] = [];
         if (doc.imagesUrls && Array.isArray(doc.imagesUrls) && doc.imagesUrls.length > 0) {
           albumImages = doc.imagesUrls.filter(Boolean);
-        } else if (fallback?.images && Array.isArray(fallback.images) && fallback.images.length > 0) {
-          albumImages = fallback.images;
+        } else if (doc.images && Array.isArray(doc.images) && doc.images.length > 0) {
+          albumImages = doc.images.map(img => getSanityImageUrl(img)).filter(Boolean);
         } else {
           albumImages = [cover];
         }
@@ -64,12 +64,12 @@ const Gallery: React.FC = () => {
           albumImages = [cover, ...albumImages];
         }
 
-        const resolvedSlug = (doc as any).slug || fallback?.slug || doc._id || `album-${idx}`;
+        const resolvedSlug = (doc as any).slug || (doc.slug as any)?.current || doc._id || `album-${idx + 1}`;
 
         return {
-          id: doc._id || `album-${idx}`,
+          id: doc._id || `album-${idx + 1}`,
           slug: resolvedSlug,
-          title: cmsT(doc.title, language === 'en' ? (doc.titleEn || fallback?.titleEn || fallback?.title) : (doc.titleAr || fallback?.title)),
+          title: cmsT(doc.title, language === 'en' ? (doc.titleEn || '') : (doc.titleAr || '')),
           description: cmsT(doc.description, language === 'en' ? (doc.descriptionEn || '') : (doc.descriptionAr || '')),
           coverImage: cover,
           images: albumImages,
@@ -86,6 +86,10 @@ const Gallery: React.FC = () => {
           featured: doc.isFeatured || false,
         };
       });
+    }
+
+    if (isLoading) {
+      return [];
     }
 
     return galleryItems.map((item) => {
@@ -113,7 +117,7 @@ const Gallery: React.FC = () => {
         featured: item.featured || false,
       };
     });
-  }, [sanityGallery, language, cmsT, t.galleryPage]);
+  }, [sanityGallery, isLoading, language, cmsT, t.galleryPage]);
 
   // Filtered albums list
   const filteredAlbums = useMemo(() => {
@@ -200,7 +204,19 @@ const Gallery: React.FC = () => {
           </ScrollReveal>
 
           {/* Albums Grid */}
-          {filteredAlbums.length > 0 ? (
+          {isLoading && allAlbums.length === 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {[1, 2, 3, 4, 5, 6].map((k) => (
+                <div key={k} className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full animate-pulse">
+                  <div className="h-64 md:h-72 bg-gray-200" />
+                  <div className="p-6 flex items-center justify-between">
+                    <div className="h-4 w-24 bg-gray-200 rounded" />
+                    <div className="h-4 w-16 bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredAlbums.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {filteredAlbums.map((album, idx) => {
                 const albumPath = `${basePath}/gallery/${encodeURIComponent(album.slug)}`;
@@ -218,7 +234,7 @@ const Gallery: React.FC = () => {
                       <div className="relative h-64 md:h-72 overflow-hidden bg-[#18213F]">
                         <img
                           src={album.coverImage}
-                          alt={album.title}
+                          alt={album.title || (language === 'en' ? 'Album Cover' : 'غلاف الألبوم')}
                           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                           loading="lazy"
                         />
@@ -252,17 +268,21 @@ const Gallery: React.FC = () => {
 
                       {/* Album Details */}
                       <div className="p-6 flex flex-col flex-1 justify-between bg-white">
-                        <div>
-                          <h3 className="text-lg md:text-xl font-black text-[#18213F] mb-2 leading-tight group-hover:text-[#D90429] transition-colors">
-                            {album.title}
-                          </h3>
-                          {album.description && (
-                            <p className="text-[#5A6E85] text-sm leading-relaxed font-medium line-clamp-2">
-                              {album.description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#D90429]">
+                        {(album.title || album.description) ? (
+                          <div className="mb-3">
+                            {album.title ? (
+                              <h3 className="text-lg md:text-xl font-black text-[#18213F] mb-2 leading-tight group-hover:text-[#D90429] transition-colors">
+                                {album.title}
+                              </h3>
+                            ) : null}
+                            {album.description ? (
+                              <p className="text-[#5A6E85] text-sm leading-relaxed font-medium line-clamp-2">
+                                {album.description}
+                              </p>
+                            ) : null}
+                          </div>
+                        ) : null}
+                        <div className={`flex items-center justify-between text-xs font-bold text-[#D90429] ${(album.title || album.description) ? 'pt-4 border-t border-gray-100' : 'pt-2'}`}>
                           <span className="inline-flex items-center gap-1.5 group-hover:underline">
                             <span>{t.galleryPage.openAlbum}</span>
                             <ArrowIcon size={14} className={`transition-transform duration-300 ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />

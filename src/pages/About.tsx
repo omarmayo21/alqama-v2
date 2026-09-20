@@ -57,7 +57,7 @@ const About: React.FC = () => {
               <h2 className="text-3xl md:text-5xl font-black text-[#18213F] leading-tight mb-6">
                 {aboutPage?.storyHeadline || aboutPage?.storyHighlight ? (
                   <>
-                    {cmsT(aboutPage?.storyHeadline, language === 'en' ? 'A Decade of Excellence' : 'رحلة عشر سنوات')}{' '}
+                    {cmsT(aboutPage?.storyHeadline, language === 'en' ? 'A Decade of Excellence' : 'رحلة  سنوات')}{' '}
                     <br />
                     <span className="text-[#D90429]">
                       {cmsT(aboutPage?.storyHighlight, language === 'en' ? '& Children Athletic Leadership' : 'من التميز والإنجاز الرياضي')}
@@ -70,7 +70,7 @@ const About: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    رحلة عشر سنوات
+                    رحلة  سنوات
                     <br />
                     <span className="text-[#D90429]">من التميز والإنجاز الرياضي</span>
                   </>

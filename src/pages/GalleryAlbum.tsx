@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -18,6 +19,7 @@ import ScrollReveal from '../components/animation/ScrollReveal';
 import { galleryItems } from '../data/gallery';
 import { useLanguage } from '../context/LanguageContext';
 import { useSanityData } from '../context/SanityDataContext';
+import { getSanityImageUrl } from '../lib/sanity/image';
 import { translations } from '../data/translations';
 import { WHATSAPP_URL } from '../utils/constants';
 
@@ -35,7 +37,7 @@ interface ResolvedAlbumDetail {
 const GalleryAlbum: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { language, isRTL } = useLanguage();
-  const { galleryImages: sanityGallery, t: cmsT } = useSanityData();
+  const { galleryImages: sanityGallery, isLoading, t: cmsT } = useSanityData();
   const t = translations[language];
   const basePath = language === 'en' ? '/en' : '';
   const ArrowIcon = isRTL ? ArrowRight : ArrowLeft;
@@ -46,31 +48,34 @@ const GalleryAlbum: React.FC = () => {
   // Resolve album from Sanity or fallback data
   const album: ResolvedAlbumDetail | null = useMemo(() => {
     if (!slug) return null;
-    const decodedSlug = decodeURIComponent(slug);
+    const decodedSlug = decodeURIComponent(slug).trim();
+    const cleanDecoded = decodedSlug.replace(/^galleryImage-/, '');
 
     // 1. Try Sanity
     if (sanityGallery && sanityGallery.length > 0) {
       const matchIdx = sanityGallery.findIndex((doc, idx) => {
-        const docSlug = (doc as any).slug || (doc.titleEn ? doc.titleEn.toLowerCase().replace(/\s+/g, '-') : null) || doc._id || `album-${idx}`;
-        const fallback = galleryItems[idx];
+        const docSlug = (doc as any).slug || (doc.slug as any)?.current || (doc.titleEn ? doc.titleEn.toLowerCase().replace(/\s+/g, '-') : null) || doc._id || `album-${idx + 1}`;
+        const cleanDocId = doc._id?.replace(/^galleryImage-/, '');
         return (
           docSlug === decodedSlug ||
+          docSlug === cleanDecoded ||
           doc._id === decodedSlug ||
-          fallback?.slug === decodedSlug ||
-          fallback?.id === decodedSlug
+          doc._id === `galleryImage-${decodedSlug}` ||
+          cleanDocId === cleanDecoded ||
+          `album-${idx + 1}` === decodedSlug ||
+          `album-${idx + 1}` === cleanDecoded
         );
       });
 
       if (matchIdx !== -1) {
         const doc = sanityGallery[matchIdx];
-        const fallback = galleryItems[matchIdx] || galleryItems[0];
-        const cover = doc.coverImageUrl || doc.imageUrl || fallback?.coverImage || fallback?.image || '/images/hero-bg.jpg';
+        const cover = doc.coverImageUrl || doc.imageUrl || getSanityImageUrl(doc.coverImage) || getSanityImageUrl(doc.image) || '/images/hero-bg.jpg';
 
         let albumImages: string[] = [];
         if (doc.imagesUrls && Array.isArray(doc.imagesUrls) && doc.imagesUrls.length > 0) {
           albumImages = doc.imagesUrls.filter(Boolean);
-        } else if (fallback?.images && Array.isArray(fallback.images) && fallback.images.length > 0) {
-          albumImages = fallback.images;
+        } else if (doc.images && Array.isArray(doc.images) && doc.images.length > 0) {
+          albumImages = doc.images.map(img => getSanityImageUrl(img)).filter(Boolean);
         } else {
           albumImages = [cover];
         }
@@ -82,9 +87,9 @@ const GalleryAlbum: React.FC = () => {
         const cat = (doc.category as string) || 'other';
 
         return {
-          id: doc._id || `album-${matchIdx}`,
-          slug: (doc as any).slug || fallback?.slug || decodedSlug,
-          title: cmsT(doc.title, language === 'en' ? (doc.titleEn || fallback?.titleEn || fallback?.title) : (doc.titleAr || fallback?.title)),
+          id: doc._id || `album-${matchIdx + 1}`,
+          slug: (doc as any).slug || (doc.slug as any)?.current || decodedSlug,
+          title: cmsT(doc.title, language === 'en' ? (doc.titleEn || '') : (doc.titleAr || '')),
           description: cmsT(doc.description, language === 'en' ? (doc.descriptionEn || '') : (doc.descriptionAr || '')),
           coverImage: cover,
           images: albumImages,
@@ -102,7 +107,11 @@ const GalleryAlbum: React.FC = () => {
       }
     }
 
-    // 2. Try Static Fallback
+    if (isLoading) {
+      return null;
+    }
+
+    // 2. Try Static Fallback (only when NOT loading)
     const staticItem = galleryItems.find(
       (item) => item.slug === decodedSlug || item.id === decodedSlug
     );
@@ -133,9 +142,21 @@ const GalleryAlbum: React.FC = () => {
     }
 
     return null;
-  }, [slug, sanityGallery, language, cmsT, t.galleryPage]);
+  }, [slug, sanityGallery, isLoading, language, cmsT, t.galleryPage]);
 
-  // If album not found, redirect back to gallery
+  // If still loading and album not resolved yet, show clean loader instead of premature redirect
+  if (isLoading && !album) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F8F9FA]">
+        <div className="w-12 h-12 border-4 border-[#D90429] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-[#5A6E85] font-semibold text-sm">
+          {language === 'en' ? 'Loading album photos...' : 'جاري تحميل صور الألبوم...'}
+        </p>
+      </div>
+    );
+  }
+
+  // If album not found after loading completes, redirect back to gallery
   if (!album) {
     return <Navigate to={basePath ? `${basePath}/gallery` : '/gallery'} replace />;
   }
@@ -158,6 +179,29 @@ const GalleryAlbum: React.FC = () => {
     if (!album || album.images.length <= 1) return;
     setSelectedPhotoIndex((prev) => (prev === null || prev === album.images.length - 1 ? 0 : prev + 1));
   }, [album]);
+
+  // Touch / Swipe support for mobile lightbox navigation
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchStartX - touchEndX;
+    if (Math.abs(diffX) > 40) {
+      if (diffX > 0) {
+        // Swiped left
+        isRTL ? handlePrevPhoto() : handleNextPhoto();
+      } else {
+        // Swiped right
+        isRTL ? handleNextPhoto() : handlePrevPhoto();
+      }
+    }
+    setTouchStartX(null);
+  };
 
   // Keyboard navigation for image viewer
   useEffect(() => {
@@ -192,10 +236,10 @@ const GalleryAlbum: React.FC = () => {
     <div>
       {/* Page Header */}
       <PageHeader
-        title={album.title}
+        title={album.title || (language === 'en' ? 'Photo Album' : 'ألبوم الصور')}
         breadcrumbs={[
           { label: t.nav.gallery, path: `${basePath}/gallery` },
-          { label: album.title },
+          { label: album.title || (language === 'en' ? 'Photo Album' : 'ألبوم الصور') },
         ]}
       />
 
@@ -237,7 +281,7 @@ const GalleryAlbum: React.FC = () => {
                 >
                   <img
                     src={album.coverImage}
-                    alt={album.title}
+                    alt={album.title || (language === 'en' ? 'Cover Photo' : 'صورة الغلاف')}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#18213F]/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
@@ -263,23 +307,19 @@ const GalleryAlbum: React.FC = () => {
                     <span>{album.categoryLabel}</span>
                   </div>
 
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#18213F] leading-tight mb-4">
-                    {album.title}
-                  </h1>
+                  {album.title ? (
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#18213F] leading-tight mb-4">
+                      {album.title}
+                    </h1>
+                  ) : null}
 
                   {album.description ? (
                     <p className="text-[#5A6E85] text-base md:text-lg leading-relaxed font-normal mb-6">
                       {album.description}
                     </p>
-                  ) : (
-                    <p className="text-[#5A6E85] text-base leading-relaxed font-normal mb-6">
-                      {language === 'en' 
-                        ? 'Explore the complete photo collection captured from this event at ALQIMA Sports Academy.' 
-                        : 'استعرض كافة الصور واللحظات المميزة الموثقة من هذه الفعالية بأكاديمية القمة الرياضية.'}
-                    </p>
-                  )}
+                  ) : null}
 
-                  <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-100">
+                  <div className="flex flex-wrap items-center gap-4 pt-2">
                     <div className="text-xs font-semibold text-[#5A6E85] flex items-center gap-2">
                       <Calendar size={15} className="text-[#D90429]" />
                       <span>{language === 'en' ? 'Click any photo to view full size' : 'انقر على أي صورة لتكبيرها واستعراضها'}</span>
@@ -336,13 +376,15 @@ const GalleryAlbum: React.FC = () => {
         </div>
       </section>
 
-      {/* Dedicated Single-Image Viewer Modal */}
-      {selectedPhotoIndex !== null && (
+      {/* Dedicated Single-Image Viewer Modal rendered via Portal */}
+      {selectedPhotoIndex !== null && typeof document !== 'undefined' && createPortal(
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-5 md:p-6 animate-fade-in select-none max-h-[100dvh] overflow-hidden"
+          className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-5 md:p-6 animate-fade-in select-none max-h-[100dvh] overflow-hidden"
           onClick={handleCloseViewer}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           {/* Top Bar: Counter, Title & Close Button */}
           <div
@@ -356,9 +398,11 @@ const GalleryAlbum: React.FC = () => {
                 <span className="text-white/50">{t.galleryPage.imageCounter}</span>
                 <span>{album.images.length}</span>
               </div>
-              <span className="inline-block text-xs font-bold text-white/80 bg-white/5 px-3 py-1.5 rounded-xl truncate max-w-[180px] sm:max-w-md">
-                {album.title}
-              </span>
+              {album.title ? (
+                <span className="inline-block text-xs font-bold text-white/80 bg-white/5 px-3 py-1.5 rounded-xl truncate max-w-[180px] sm:max-w-md">
+                  {album.title}
+                </span>
+              ) : null}
             </div>
 
             <button
@@ -446,7 +490,8 @@ const GalleryAlbum: React.FC = () => {
               })}
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* CTA Bottom Banner */}

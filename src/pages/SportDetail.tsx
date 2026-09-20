@@ -47,11 +47,31 @@ const SportDetail: React.FC = () => {
     return foundStatic;
   }, [sanitySports, currentSports, sportId, cmsT, language]);
 
+  const displayedAllSports = React.useMemo(() => {
+    if (sanitySports && sanitySports.length > 0) {
+      return sanitySports.map((s) => {
+        const cleanId = s.slug || (s._id ? s._id.replace(/^sport-/, '') : '');
+        const foundStatic = currentSports.find((cs) => cs.id === cleanId || cs.id === s.slug || cs.id === s._id);
+        return {
+          id: cleanId,
+          name: cmsT(s.name, language === 'en' ? (s.nameEn || s.nameAr || foundStatic?.name || '') : (s.nameAr || s.nameEn || foundStatic?.nameAr || '')),
+          nameAr: typeof s.name === 'object' ? s.name?.ar : s.nameAr || foundStatic?.nameAr || '',
+          nameEn: typeof s.name === 'object' ? s.name?.en : s.nameEn || foundStatic?.name || '',
+          description: cmsT(s.description || s.shortDescription, language === 'en' ? (s.shortDescriptionEn || s.fullDescriptionEn || foundStatic?.description || '') : (s.shortDescriptionAr || s.fullDescriptionAr || foundStatic?.description || '')),
+          ageRange: cmsT(s.ageRange, language === 'en' ? (s.ageRangeEn || foundStatic?.ageRange || '') : (s.ageRangeAr || foundStatic?.ageRange || '')),
+          image: s.imageUrl || s.heroImageUrl || foundStatic?.image || `/images/${cleanId}.jpg`,
+        };
+      });
+    }
+    return currentSports;
+  }, [sanitySports, currentSports, cmsT, language]);
+
   if (!resolvedSport) return <Navigate to={basePath === '' ? '/sports' : `${basePath}/sports`} replace />;
 
   const sport = resolvedSport;
   const sportSchedule = scheduleItems.filter((s) => s.sportId === sportId);
-  const otherSports = currentSports.filter((s) => s.id !== sportId).slice(0, 3);
+  const currentSportCleanId = sportId ? sportId.replace(/^sport-/, '') : '';
+  const otherSports = displayedAllSports.filter((s) => s.id !== sportId && s.id !== currentSportCleanId && s.id !== `sport-${currentSportCleanId}`).slice(0, 3);
   const sportDisplayName = language === 'en' ? sport.name : (sport.nameAr || sport.name);
 
   return (

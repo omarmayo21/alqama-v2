@@ -9,7 +9,6 @@ export const galleryImage = defineType({
       name: 'title',
       title: 'Album / Event Title / عنوان الألبوم أو البطولة',
       type: 'localizedString',
-      validation: (Rule) => Rule.required(),
       description: 'مثال: بطولة كرة القدم الرمضانية / ALQIMA Ramadan Football Championship',
     }),
     defineField({

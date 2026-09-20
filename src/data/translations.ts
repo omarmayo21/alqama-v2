@@ -342,7 +342,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       scheduleBadge: 'أوقات التدريب اليومية',
       scheduleTitle: 'المواعيد اليومية',
       scheduleDays: 'من السبت إلى الخميس',
-      scheduleHours: 'من 5 إلى 8م',
+      scheduleHours: '٥:٠٠ م',
     },
     blogPage: {
       badge: 'مدونة الأكاديمية',
@@ -543,7 +543,7 @@ export const translations: Record<'ar' | 'en', TranslationSchema> = {
       scheduleBadge: 'Daily Training Times',
       scheduleTitle: 'Daily Schedule',
       scheduleDays: 'Saturday to Thursday',
-      scheduleHours: '5:00 PM – 8:00 PM',
+      scheduleHours: '5:00 PM',
     },
     blogPage: {
       badge: 'ALQIMA Blog',

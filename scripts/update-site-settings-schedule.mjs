@@ -26,8 +26,8 @@ async function updateSchedule() {
       },
       dailyScheduleHours: {
         _type: 'localizedString',
-        ar: 'من 5 إلى 8م',
-        en: '5:00 PM – 8:00 PM',
+        ar: '٥:٠٠ م',
+        en: '5:00 PM',
       },
     })
     .commit();

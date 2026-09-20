@@ -30,14 +30,16 @@ export interface ScheduleItem {
   id: string;
   sport: string;
   sportId: string;
-  level: string;
+  level?: string;
   day: string;
+  dayEn?: string;
   time: string;
-  duration: string;
-  coach: string;
-  location: string;
-  capacity: number;
-  enrolled: number;
+  timeEn?: string;
+  duration?: string;
+  coach?: string;
+  location?: string;
+  capacity?: number;
+  enrolled?: number;
 }
 
 export interface BlogPost {

@@ -42,9 +42,15 @@ const SportDetail: React.FC = () => {
         levels: foundSanity.levels && foundSanity.levels.length > 0
           ? foundSanity.levels.map(l => typeof l === 'object' ? cmsT(l as any, language === 'en' ? l.en || l.nameEn || '' : l.ar || l.nameAr || '') : String(l))
           : (foundStatic?.levels || []),
+        schedule: foundSanity.schedule && foundSanity.schedule.length > 0
+          ? foundSanity.schedule.filter((s: any) => s.isActive !== false)
+          : null,
       };
     }
-    return foundStatic;
+    return {
+      ...foundStatic,
+      schedule: null,
+    };
   }, [sanitySports, currentSports, sportId, cmsT, language]);
 
   const displayedAllSports = React.useMemo(() => {
@@ -68,8 +74,42 @@ const SportDetail: React.FC = () => {
 
   if (!resolvedSport) return <Navigate to={basePath === '' ? '/sports' : `${basePath}/sports`} replace />;
 
-  const sport = resolvedSport;
-  const sportSchedule = scheduleItems.filter((s) => s.sportId === sportId);
+  const sport = resolvedSport as any;
+
+  const sportSchedule = React.useMemo(() => {
+    const defaultTime = language === 'en' ? 'Sessions start at 5:00 PM.' : 'تبدأ الحصص الساعة 5:00 م';
+
+    if (sport.schedule && sport.schedule.length > 0) {
+      return sport.schedule.map((item: any, idx: number) => ({
+        id: item._key || `sch-${idx}`,
+        day: language === 'en' ? (item.dayEn || item.dayAr || '') : (item.dayAr || item.dayEn || ''),
+        time: language === 'en' 
+          ? (item.startTimeEn || item.timeEn || defaultTime)
+          : (item.startTimeAr || item.timeAr || defaultTime),
+      }));
+    }
+
+    const cleanId = sportId ? sportId.replace(/^sport-/, '') : '';
+    const staticMatched = scheduleItems.filter((s) => s.sportId === sportId || s.sportId === cleanId);
+    if (staticMatched.length > 0) {
+      return staticMatched.map((s, idx) => ({
+        id: s.id || `s-${idx}`,
+        day: language === 'en' ? (s.dayEn || s.day) : s.day,
+        time: language === 'en' ? (s.timeEn || defaultTime) : (s.time || defaultTime),
+      }));
+    }
+
+    const defaultDays = language === 'en' 
+      ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+      : ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+
+    return defaultDays.map((d, idx) => ({
+      id: `default-sch-${idx}`,
+      day: d,
+      time: defaultTime,
+    }));
+  }, [sport, sportId, language]);
+
   const currentSportCleanId = sportId ? sportId.replace(/^sport-/, '') : '';
   const otherSports = displayedAllSports.filter((s) => s.id !== sportId && s.id !== currentSportCleanId && s.id !== `sport-${currentSportCleanId}`).slice(0, 3);
   const sportDisplayName = language === 'en' ? sport.name : (sport.nameAr || sport.name);
@@ -124,7 +164,7 @@ const SportDetail: React.FC = () => {
               <ScrollReveal delay={80}>
                 <h3 className="text-2xl font-black text-[#18213F] mb-5">{t.sportDetailPage.curriculumTitle}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10">
-                  {sport.features.map((feature) => (
+                  {sport.features.map((feature: string) => (
                     <div key={feature} className="flex items-start gap-3 bg-[#F8F9FA] rounded-xl p-4 border border-gray-100">
                       <CheckCircle size={20} className="text-[#D90429] flex-shrink-0 mt-0.5" />
                       <span className="text-[#18213F] font-semibold text-sm leading-snug">{feature}</span>
@@ -144,7 +184,7 @@ const SportDetail: React.FC = () => {
                       <span>{language === 'en' ? 'Day' : 'اليوم'}</span>
                       <span>{language === 'en' ? 'Time' : 'الوقت'}</span>
                     </div>
-                    {sportSchedule.map((item) => (
+                    {sportSchedule.map((item: any) => (
                       <div key={item.id} className="grid grid-cols-2 text-sm px-5 py-4 border-b border-gray-200 schedule-row hover:bg-red-50/40 transition-colors">
                         <span className="font-bold text-[#18213F]">{item.day}</span>
                         <span className="text-[#5A6E85] tabular-nums font-medium">{item.time}</span>

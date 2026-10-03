@@ -23,6 +23,7 @@ import SectionHeader from '../components/ui/SectionHeader';
 import SportIcon from '../components/ui/SportIcon';
 import ScrollReveal from '../components/animation/ScrollReveal';
 import { WHATSAPP_URL } from '../utils/constants';
+import { isHeroSlideEligible } from '../utils/slideEligibility';
 import { useLanguage } from '../context/LanguageContext';
 import { useSanityData } from '../context/SanityDataContext';
 import { translations } from '../data/translations';
@@ -152,7 +153,9 @@ const Home: React.FC = () => {
 
   // Slide 1 Data (Original Hero - Preserved Exactly)
   const slide1 = useMemo(() => {
-    const s = sanityHeroSlides && sanityHeroSlides.length > 0 ? sanityHeroSlides[0] : null;
+    const s = sanityHeroSlides && sanityHeroSlides.length > 0
+      ? (sanityHeroSlides.find((item) => item._id === 'heroSlide-1' || item.displayOrder === 1) || sanityHeroSlides[0])
+      : null;
 
     const rawTitle = s
       ? (typeof s.title === 'object'
@@ -208,7 +211,9 @@ const Home: React.FC = () => {
 
   // Slide 2 Data (Clean duplicate of Slide 1 structure, using slide 2 image)
   const slide2 = useMemo(() => {
-    const s = sanityHeroSlides && sanityHeroSlides.length > 1 ? sanityHeroSlides[1] : null;
+    const s = sanityHeroSlides && sanityHeroSlides.length > 1
+      ? (sanityHeroSlides.find((item) => item._id === 'heroSlide-2' || item.displayOrder === 2) || sanityHeroSlides[1])
+      : (sanityHeroSlides?.find((item) => item._id === 'heroSlide-2' || item.displayOrder === 2) || null);
 
     const rawTitle = s
       ? (typeof s.title === 'object'
@@ -260,26 +265,77 @@ const Home: React.FC = () => {
     };
   }, [sanityHeroSlides, language, basePath, slide1]);
 
-  // Autoplay (5.5s interval, paused on hover)
+  // Evaluated Eligible Slides (Respects isActive toggle, startDate, endDate, and provides safe fallback)
+  const eligibleSlides = useMemo(() => {
+    const list: Array<{
+      id: string;
+      type: 'slide1' | 'slide2';
+      image: string;
+      title: string;
+      badge?: string;
+      description?: string;
+      primaryCtaText: string;
+      primaryCtaLink: string;
+      secondaryCtaText: string;
+      secondaryCtaLink: string;
+      reassuranceText: string;
+    }> = [];
+
+    // Find Sanity documents if present
+    const s1Doc = sanityHeroSlides.find((item) => item._id === 'heroSlide-1' || item.displayOrder === 1) || (sanityHeroSlides.length > 0 ? sanityHeroSlides[0] : null);
+    const s2Doc = sanityHeroSlides.find((item) => item._id === 'heroSlide-2' || item.displayOrder === 2) || (sanityHeroSlides.length > 1 ? sanityHeroSlides[1] : null);
+
+    // Slide 1 is eligible if its Sanity doc is eligible (or default true if no Sanity data yet)
+    const isSlide1Active = s1Doc ? isHeroSlideEligible(s1Doc) : true;
+    if (isSlide1Active) {
+      list.push({ ...slide1, type: 'slide1' });
+    }
+
+    // Slide 2 is eligible only if its Sanity doc exists and is active & scheduled
+    const isSlide2Active = s2Doc ? isHeroSlideEligible(s2Doc) : false;
+    if (isSlide2Active) {
+      list.push({ ...slide2, type: 'slide2' });
+    }
+
+    // Safe fallback: If no slides are eligible (e.g. all disabled or expired), render slide 1 fallback
+    if (list.length === 0) {
+      list.push({ ...slide1, type: 'slide1' });
+    }
+
+    return list;
+  }, [sanityHeroSlides, slide1, slide2]);
+
+  // Ensure currentSlide is always within bounds of eligibleSlides
   useEffect(() => {
-    if (isPaused) return;
+    if (currentSlide >= eligibleSlides.length) {
+      setCurrentSlide(0);
+    }
+  }, [eligibleSlides.length, currentSlide]);
+
+  // Autoplay (5.5s interval, paused on hover, only when multiple slides are eligible)
+  useEffect(() => {
+    if (isPaused || eligibleSlides.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+      setCurrentSlide((prev) => (prev + 1) % eligibleSlides.length);
     }, 5500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, eligibleSlides.length]);
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-  }, []);
+    if (eligibleSlides.length <= 1) return;
+    setCurrentSlide((prev) => (prev + 1) % eligibleSlides.length);
+  }, [eligibleSlides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-  }, []);
+    if (eligibleSlides.length <= 1) return;
+    setCurrentSlide((prev) => (prev - 1 + eligibleSlides.length) % eligibleSlides.length);
+  }, [eligibleSlides.length]);
 
   const goToSlide = useCallback((index: number) => {
-    setCurrentSlide(index);
-  }, []);
+    if (index >= 0 && index < eligibleSlides.length) {
+      setCurrentSlide(index);
+    }
+  }, [eligibleSlides.length]);
 
   // Touch / Swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -292,7 +348,7 @@ const Home: React.FC = () => {
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || eligibleSlides.length <= 1) return;
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
@@ -318,184 +374,205 @@ const Home: React.FC = () => {
         onTouchEnd={handleTouchEnd}
         aria-label="Hero Slider"
       >
-        {/* SLIDE 1: Original Hero Design (Preserved 100%) */}
-        <div 
-          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-            currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <img
-              src={slide1.image}
-              alt={slide1.title}
-              className="w-full h-full object-cover object-center animate-hero-bg"
-              loading="eager"
-            />
-            <div className="hero-overlay absolute inset-0" />
-          </div>
+        {eligibleSlides.map((slide, index) => {
+          const isVisible = currentSlide === index;
 
-          {/* Decorative subtle ambient circles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-            <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
-            <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
-            <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#D90429]/20" />
-          </div>
+          if (slide.type === 'slide2') {
+            return (
+              <div 
+                key={slide.id || `slide-${index}`}
+                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                  isVisible ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
+                }`}
+              >
+                {/* Background Image: Original colors and brightness (NO dark overlay), mobile object-position: 84% center */}
+                <div className="absolute inset-0">
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-cover object-[84%_center] sm:object-[42%_center] md:object-[38%_center] lg:object-[38%_30%] animate-hero-bg"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
 
-          {/* Slide 1 Content */}
-          <div className="container mx-auto px-4 md:px-8 relative z-10 py-20 min-h-[90vh] flex items-center">
-            <div className="max-w-3xl animate-fade-up">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-[#D90429]/25 backdrop-blur-md border border-[#D90429]/40 text-white px-4 py-1.5 rounded-full mb-8">
-                <span className="w-2 h-2 rounded-full bg-[#FFC400]" />
-                <span className="text-sm font-bold">{slide1.badge}</span>
-              </div>
+                {/* Decorative subtle ambient circles */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+                  <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
+                  <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
+                  <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#006C35]/20" />
+                </div>
 
-              {/* Title */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight whitespace-pre-line">
-                {slide1.title}
-              </h1>
+                {/* Slide 2 Content (Right-aligned, moved down on mobile, no badge) */}
+                <div className="container mx-auto px-4 md:px-8 relative z-10 py-12 sm:py-16 md:py-20 min-h-[90vh] flex items-center">
+                  <div className={`max-w-3xl w-full animate-fade-up relative top-[50px] sm:top-0 pt-8 sm:pt-14 md:pt-20 text-right ${isRTL ? 'md:-mr-6 lg:-mr-15' : 'md:-ml-6 lg:-ml-55'}`}>
+                    {/* Title: Centered with line-height: 2 on mobile only */}
+                    <h1 className="text-center sm:text-right text-[26px] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-white leading-[2] sm:leading-tight mb-4 sm:mb-6 tracking-tight whitespace-pre-line">
+                      {slide.title}
+                    </h1>
 
-              {/* Subtitle / Description */}
-              <p className="text-white/90 text-lg sm:text-xl md:text-2xl leading-relaxed mb-10 max-w-2xl font-normal">
-                {slide1.description}
-              </p>
+                    {/* Subtitle / Description: Clean responsive sizing and spacing */}
+                    {slide.description ? (
+                      <p className="text-white/90 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed mb-6 sm:mb-8 md:mb-10 max-w-2xl font-normal">
+                        {slide.description}
+                      </p>
+                    ) : null}
 
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href={slide1.primaryCtaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-[#D90429] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#B0021F] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                >
-                  <MessageCircle size={22} />
-                  <span>{slide1.primaryCtaText}</span>
-                </a>
-                <Link
-                  to={slide1.secondaryCtaLink}
-                  className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                >
-                  <span>{slide1.secondaryCtaText}</span>
-                  <ArrowIcon size={20} />
-                </Link>
-              </div>
+                    {/* CTA Buttons: Both Saudi Green, positioned on the right underneath the text */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-2 sm:mt-4">
+                      <a
+                        href={slide.primaryCtaLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2.5 bg-[#006C35] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-[#005429] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-emerald-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
+                      >
+                        <MessageCircle size={20} className="sm:w-[22px] sm:h-[22px]" />
+                        <span>{slide.primaryCtaText}</span>
+                      </a>
+                      <Link
+                        to={slide.secondaryCtaLink}
+                        className="inline-flex items-center justify-center gap-2 bg-[#006C35]/25 backdrop-blur-md text-white border-2 border-[#006C35] hover:bg-[#006C35]/40 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:border-[#00843D] transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
+                      >
+                        <span>{slide.secondaryCtaText}</span>
+                        <ArrowIcon size={18} className="sm:w-5 sm:h-5" />
+                      </Link>
+                    </div>
 
-              {/* Reassurance badge */}
-              <div className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-white/10 text-white/80 text-sm font-semibold">
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#FFC400]" />
-                  <span>{slide1.reassuranceText}</span>
+                    {/* Reassurance badge */}
+                    <div className="flex flex-wrap items-center gap-6 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10 text-white/80 text-xs sm:text-sm font-semibold">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle size={16} className="text-[#00E676]" />
+                        <span>{slide.reassuranceText}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            );
+          }
 
-        {/* SLIDE 2: Clean Hero with Slide 2 Image, No Dark Overlay, Green CTAs, and Right-Aligned Content */}
-        <div 
-          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-            currentSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          {/* Background Image: Original colors and brightness (NO dark overlay), mobile object-position: 84% center */}
-          <div className="absolute inset-0">
-            <img
-              src={slide2.image}
-              alt={slide2.title}
-              className="w-full h-full object-cover object-[84%_center] sm:object-[42%_center] md:object-[38%_center] lg:object-[38%_30%] animate-hero-bg"
-              loading="lazy"
-            />
-          </div>
-
-          {/* Decorative subtle ambient circles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-            <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
-            <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
-            <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#006C35]/20" />
-          </div>
-
-          {/* Slide 2 Content (Right-aligned, moved down on mobile, no badge) */}
-          <div className="container mx-auto px-4 md:px-8 relative z-10 py-12 sm:py-16 md:py-20 min-h-[90vh] flex items-center">
-            <div className={`max-w-3xl w-full animate-fade-up relative top-[50px] sm:top-0 pt-8 sm:pt-14 md:pt-20 text-right ${isRTL ? 'md:-mr-6 lg:-mr-15' : 'md:-ml-6 lg:-ml-55'}`}>
-              {/* Title: Centered with line-height: 2 on mobile only */}
-              <h1 className="text-center sm:text-right text-[26px] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-black text-white leading-[2] sm:leading-tight mb-4 sm:mb-6 tracking-tight whitespace-pre-line">
-                {slide2.title}
-              </h1>
-
-              {/* Subtitle / Description: Clean responsive sizing and spacing */}
-              {slide2.description ? (
-                <p className="text-white/90 text-sm sm:text-lg md:text-xl lg:text-2xl leading-relaxed mb-6 sm:mb-8 md:mb-10 max-w-2xl font-normal">
-                  {slide2.description}
-                </p>
-              ) : null}
-
-              {/* CTA Buttons: Both Saudi Green, positioned on the right underneath the text */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-2 sm:mt-4">
-                <a
-                  href={slide2.primaryCtaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2.5 bg-[#006C35] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-[#005429] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-emerald-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
-                >
-                  <MessageCircle size={20} className="sm:w-[22px] sm:h-[22px]" />
-                  <span>{slide2.primaryCtaText}</span>
-                </a>
-                <Link
-                  to={slide2.secondaryCtaLink}
-                  className="inline-flex items-center justify-center gap-2 bg-[#006C35]/25 backdrop-blur-md text-white border-2 border-[#006C35] hover:bg-[#006C35]/40 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:border-[#00843D] transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white text-center"
-                >
-                  <span>{slide2.secondaryCtaText}</span>
-                  <ArrowIcon size={18} className="sm:w-5 sm:h-5" />
-                </Link>
-              </div>
-
-              {/* Reassurance badge */}
-              <div className="flex flex-wrap items-center gap-6 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10 text-white/80 text-xs sm:text-sm font-semibold">
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#00E676]" />
-                  <span>{slide2.reassuranceText}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Arrows */}
-        <button
-          type="button"
-          onClick={isRTL ? nextSlide : prevSlide}
-          aria-label={isRTL ? (language === 'en' ? 'Next Slide' : 'الشريحة التالية') : (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة')}
-          className="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 sm:left-6 md:left-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
-        >
-          <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
-        </button>
-
-        <button
-          type="button"
-          onClick={isRTL ? prevSlide : nextSlide}
-          aria-label={isRTL ? (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة') : (language === 'en' ? 'Next Slide' : 'الشريحة التالية')}
-          className="hidden sm:flex absolute top-1/2 -translate-y-1/2 right-3 sm:right-6 md:right-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
-        >
-          <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
-        </button>
-
-        {/* Pagination Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-[#18213F]/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-          {[0, 1].map((idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => goToSlide(idx)}
-              aria-label={language === 'en' ? `Go to slide ${idx + 1}` : `الانتقال إلى الشريحة ${idx + 1}`}
-              className={`transition-all duration-500 rounded-full ${
-                idx === currentSlide
-                  ? 'w-8 h-2.5 bg-[#D90429]'
-                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/75'
+          // Default: Slide 1 Template (Original Red Hero Design)
+          return (
+            <div 
+              key={slide.id || `slide-${index}`}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                isVisible ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'
               }`}
-            />
-          ))}
-        </div>
+            >
+              {/* Background Image */}
+              <div className="absolute inset-0">
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover object-center animate-hero-bg"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
+                <div className="hero-overlay absolute inset-0" />
+              </div>
+
+              {/* Decorative subtle ambient circles */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+                <div className="absolute top-20 left-10 w-72 h-72 rounded-full border border-white/5" />
+                <div className="absolute top-40 left-20 w-36 h-36 rounded-full border border-white/10" />
+                <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full border border-[#D90429]/20" />
+              </div>
+
+              {/* Slide 1 Content */}
+              <div className="container mx-auto px-4 md:px-8 relative z-10 py-20 min-h-[90vh] flex items-center">
+                <div className="max-w-3xl animate-fade-up">
+                  {/* Badge */}
+                  {slide.badge ? (
+                    <div className="inline-flex items-center gap-2 bg-[#D90429]/25 backdrop-blur-md border border-[#D90429]/40 text-white px-4 py-1.5 rounded-full mb-8">
+                      <span className="w-2 h-2 rounded-full bg-[#FFC400]" />
+                      <span className="text-sm font-bold">{slide.badge}</span>
+                    </div>
+                  ) : null}
+
+                  {/* Title */}
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6 tracking-tight whitespace-pre-line">
+                    {slide.title}
+                  </h1>
+
+                  {/* Subtitle / Description */}
+                  {slide.description ? (
+                    <p className="text-white/90 text-lg sm:text-xl md:text-2xl leading-relaxed mb-10 max-w-2xl font-normal">
+                      {slide.description}
+                    </p>
+                  ) : null}
+
+                  {/* CTA Buttons */}
+                  <div className="flex flex-wrap gap-4">
+                    <a
+                      href={slide.primaryCtaLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2.5 bg-[#D90429] text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#B0021F] transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                    >
+                      <MessageCircle size={22} />
+                      <span>{slide.primaryCtaText}</span>
+                    </a>
+                    <Link
+                      to={slide.secondaryCtaLink}
+                      className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                    >
+                      <span>{slide.secondaryCtaText}</span>
+                      <ArrowIcon size={20} />
+                    </Link>
+                  </div>
+
+                  {/* Reassurance badge */}
+                  <div className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-white/10 text-white/80 text-sm font-semibold">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={16} className="text-[#FFC400]" />
+                      <span>{slide.reassuranceText}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Navigation Arrows (Only shown when multiple slides are eligible) */}
+        {eligibleSlides.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={isRTL ? nextSlide : prevSlide}
+              aria-label={isRTL ? (language === 'en' ? 'Next Slide' : 'الشريحة التالية') : (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة')}
+              className="hidden sm:flex absolute top-1/2 -translate-y-1/2 left-3 sm:left-6 md:left-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+
+            <button
+              type="button"
+              onClick={isRTL ? prevSlide : nextSlide}
+              aria-label={isRTL ? (language === 'en' ? 'Previous Slide' : 'الشريحة السابقة') : (language === 'en' ? 'Next Slide' : 'الشريحة التالية')}
+              className="hidden sm:flex absolute top-1/2 -translate-y-1/2 right-3 sm:right-6 md:right-8 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white items-center justify-center transition-all duration-300 shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </>
+        )}
+
+        {/* Pagination Dots (Only shown when multiple slides are eligible) */}
+        {eligibleSlides.length > 1 && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-[#18213F]/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+            {eligibleSlides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => goToSlide(idx)}
+                aria-label={language === 'en' ? `Go to slide ${idx + 1}` : `الانتقال إلى الشريحة ${idx + 1}`}
+                className={`transition-all duration-500 rounded-full ${
+                  idx === currentSlide
+                    ? 'w-8 h-2.5 bg-[#D90429]'
+                    : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/75'
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 4 Feature Items Section */}

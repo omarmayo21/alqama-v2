@@ -469,6 +469,8 @@ export interface SanityHeroSlide {
   imageUrl?: string;
   displayOrder?: number;
   isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface SanityNavigation {
